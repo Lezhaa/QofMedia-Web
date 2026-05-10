@@ -1,0 +1,104 @@
+@extends('adminlte::page')
+
+@section('title', 'Edit Paket Studio')
+
+@section('content_header')
+    <div>
+        <h1>Edit Paket Studio: {{ $package->name }}</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('studio.dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('studio.packages.index') }}">Paket Studio</a></li>
+            <li class="breadcrumb-item active">Edit</li>
+        </ol>
+    </div>
+@stop
+
+@section('content')
+    <div class="card">
+        <div class="card-body">
+            <form action="{{ route('studio.packages.update', $package) }}" method="POST">
+                @csrf
+                @method('PUT')
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="name">Nama Paket <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" 
+                                   id="name" name="name" value="{{ old('name', $package->name) }}" required>
+                            @error('name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="type">Tipe Paket <span class="text-danger">*</span></label>
+                            <select name="type" id="type" class="form-control @error('type') is-invalid @enderror" required>
+                                <option value="">Pilih Tipe</option>
+                                <option value="Basic" {{ old('type', $package->type) == 'Basic' ? 'selected' : '' }}>Basic</option>
+                                <option value="Standard" {{ old('type', $package->type) == 'Standard' ? 'selected' : '' }}>Standard</option>
+                                <option value="Premium" {{ old('type', $package->type) == 'Premium' ? 'selected' : '' }}>Premium</option>
+                                <option value="Exclusive" {{ old('type', $package->type) == 'Exclusive' ? 'selected' : '' }}>Exclusive</option>
+                            </select>
+                            @error('type')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Deskripsi</label>
+                    <textarea class="form-control @error('description') is-invalid @enderror" 
+                              id="description" name="description" rows="3">{{ old('description', $package->description) }}</textarea>
+                    @error('description')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="price">Harga (Rp) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control @error('price') is-invalid @enderror" 
+                                   id="price" name="price" value="{{ old('price', $package->price) }}" required>
+                            @error('price')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="duration">Durasi <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('duration') is-invalid @enderror" 
+                                   id="duration" name="duration" value="{{ old('duration', $package->duration) }}" required>
+                            @error('duration')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="facilities">Fasilitas (satu per baris)</label>
+                    <textarea class="form-control @error('facilities') is-invalid @enderror" 
+                              id="facilities" name="facilities" rows="5">{{ old('facilities', is_array($package->facilities) ? implode("\n", $package->facilities) : '') }}</textarea>
+                    <small class="form-text text-muted">Tulis setiap fasilitas pada baris baru.</small>
+                    @error('facilities')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save mr-1"></i> Update Paket
+                    </button>
+                    <a href="{{ route('studio.packages.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-times mr-1"></i> Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+@stop
