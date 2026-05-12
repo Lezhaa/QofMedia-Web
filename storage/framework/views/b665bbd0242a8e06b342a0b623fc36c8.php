@@ -3,7 +3,7 @@
 <?php $__env->startSection('title', 'Tambah Artikel'); ?>
 
 <?php $__env->startSection('content_header'); ?>
-    <h1>Tambah Artikel Baru</h1>
+    <h1>Tambah Informasi Baru</h1>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>

@@ -24,17 +24,22 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0D1B2A 0%, #1B3A4B 50%, #0E7A96 100%);
+            background-image: url('{{ asset("images/bg.jpg") }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 60px 20px;
+            padding: 20px;
             position: relative;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
-        /* Background ornaments */
+        /* Background ornaments — sama persis dengan login */
         body::before {
             content: '';
             position: absolute;
@@ -44,6 +49,7 @@
             height: 500px;
             background: radial-gradient(circle, rgba(78,184,204,0.15) 0%, transparent 70%);
             border-radius: 50%;
+            z-index: 0;
         }
 
         body::after {
@@ -55,21 +61,22 @@
             height: 400px;
             background: radial-gradient(circle, rgba(168,221,232,0.1) 0%, transparent 70%);
             border-radius: 50%;
+            z-index: 0;
         }
 
         /* ============================================
-           REGISTER CARD
+           REGISTER CARD — diperkecil
            ============================================ */
         .register-wrapper {
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 420px;
+            max-width: 380px; /* dikurangi dari 440px */
         }
 
         .register-card {
             background: white;
-            border-radius: 20px;
+            border-radius: 20px; /* dikurangi dari 24px */
             box-shadow: 0 25px 80px rgba(0,0,0,0.3);
             overflow: hidden;
             width: 100%;
@@ -79,7 +86,7 @@
         .register-header {
             background: linear-gradient(135deg, #0D1B2A 0%, #0E7A96 100%);
             color: white;
-            padding: 24px 28px;
+            padding: 16px 26px; /* diperkecil */
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -90,16 +97,16 @@
             position: absolute;
             top: -20px;
             right: -20px;
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             background: radial-gradient(circle, rgba(78,184,204,0.3) 0%, transparent 70%);
             border-radius: 50%;
         }
 
         .register-header .logo-img {
-            height: 32px;
+            height: 26px; /* diperkecil */
             width: auto;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             position: relative;
             z-index: 1;
         }
@@ -107,37 +114,43 @@
         .register-header h3 {
             margin: 0;
             font-weight: 700;
-            font-size: 1.15rem;
+            font-size: 0.95rem; /* diperkecil */
             position: relative;
             z-index: 1;
         }
 
         .register-header p {
-            margin: 4px 0 0;
+            margin: 3px 0 0;
             opacity: 0.8;
-            font-size: 0.8rem;
+            font-size: 0.72rem; /* diperkecil */
             position: relative;
             z-index: 1;
         }
 
         /* Body */
         .register-body {
-            padding: 24px 28px;
+            padding: 16px 22px; /* diperkecil */
         }
 
-        /* Form */
+        /* Form Labels */
         .form-label {
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.73rem; /* diperkecil */
             color: #0D1B2A;
-            margin-bottom: 6px;
+            margin-bottom: 3px;
         }
 
+        /* mb-3 override */
+        .mb-3 {
+            margin-bottom: 0.45rem !important; /* lebih rapat */
+        }
+
+        /* Input */
         .form-control {
             border-radius: 10px;
-            padding: 10px 14px;
+            padding: 7px 11px; /* diperkecil */
             border: 1.5px solid #E2E8F0;
-            font-size: 0.85rem;
+            font-size: 0.78rem; /* diperkecil */
             transition: all 0.3s;
             background: #F8FAFC;
         }
@@ -150,7 +163,6 @@
 
         .form-control::placeholder {
             color: #94A3B8;
-            font-size: 0.8rem;
         }
 
         .form-control.is-invalid {
@@ -162,53 +174,33 @@
         }
 
         .invalid-feedback {
-            font-size: 0.75rem;
+            font-size: 0.73rem; /* dikurangi dari 0.8rem */
             font-weight: 500;
             margin-top: 4px;
         }
 
-        /* Input Group with Icon */
-        .input-group .input-group-icon {
-            background: #F8FAFC;
-            border: 1.5px solid #E2E8F0;
-            border-right: none;
-            border-radius: 10px 0 0 10px;
-            padding: 0 12px;
-            display: flex;
-            align-items: center;
-            color: #64748B;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-        }
-
+        /* Input Group (Password) */
         .input-group .form-control {
-            border-left: none;
+            border-right: none;
         }
 
-        .input-group:focus-within .form-control {
-            border-color: #4EB8CC;
-        }
-
-        .input-group:focus-within .input-group-icon {
-            border-color: #4EB8CC;
-            color: #0E7A96;
-        }
-
-        /* Password Toggle */
         .input-group .btn-toggle-password {
             border: 1.5px solid #E2E8F0;
             border-left: none;
             background: #F8FAFC;
-            border-radius: 0 10px 10px 0;
-            padding: 0 12px;
+            border-radius: 0 10px 10px 0; /* ikut border-radius input */
+            padding: 0 12px; /* dikurangi dari 0 14px */
             color: #64748B;
             transition: all 0.3s;
-            font-size: 0.9rem;
         }
 
         .input-group .btn-toggle-password:hover {
             background: #E2E8F0;
             color: #0E7A96;
+        }
+
+        .input-group:focus-within .form-control {
+            border-color: #4EB8CC;
         }
 
         .input-group:focus-within .btn-toggle-password {
@@ -220,9 +212,9 @@
             background: linear-gradient(135deg, #0E7A96 0%, #4EB8CC 100%);
             border: none;
             border-radius: 10px;
-            padding: 11px;
+            padding: 8px; /* diperkecil */
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.82rem; /* diperkecil */
             color: white;
             width: 100%;
             transition: all 0.3s;
@@ -248,7 +240,7 @@
             color: #0E7A96;
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.82rem;
+            font-size: 0.82rem; /* dikurangi dari 0.85rem */
             transition: all 0.3s;
         }
 
@@ -261,10 +253,10 @@
         .divider-text {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             color: #94A3B8;
-            font-size: 0.75rem;
-            margin: 16px 0;
+            font-size: 0.72rem;
+            margin: 10px 0; /* diperkecil */
         }
 
         .divider-text::before,
@@ -277,11 +269,11 @@
 
         /* Alert */
         .alert {
-            border-radius: 10px;
-            font-size: 0.8rem;
-            padding: 10px 14px;
+            border-radius: 10px; /* dikurangi dari 12px */
+            font-size: 0.78rem; /* dikurangi dari 0.85rem */
+            padding: 10px 14px; /* dikurangi dari 14px 16px */
             border: none;
-            margin-bottom: 16px;
+            margin-bottom: 12px; /* dikurangi dari 16px */
         }
 
         .alert-success {
@@ -289,36 +281,25 @@
             color: #065F46;
         }
 
-        .mb-3 {
-            margin-bottom: 14px !important;
-        }
-
-        .mb-4 {
-            margin-bottom: 18px !important;
+        /* mt-4 override untuk login link */
+        .mt-4 {
+            margin-top: 0.6rem !important;
         }
 
         /* ============================================
            RESPONSIVE
            ============================================ */
         @media (max-width: 480px) {
-            .register-wrapper {
-                max-width: 100%;
-            }
-
             .register-header {
-                padding: 20px 20px;
+                padding: 20px 18px;
             }
 
             .register-body {
-                padding: 20px 20px;
+                padding: 20px 18px;
             }
 
             .register-header h3 {
-                font-size: 1.05rem;
-            }
-
-            .register-header .logo-img {
-                height: 28px;
+                font-size: 1rem;
             }
         }
     </style>
@@ -327,6 +308,7 @@
 
     <div class="register-wrapper">
         <div class="register-card">
+
             {{-- Header --}}
             <div class="register-header">
                 <img src="{{ asset('images/logo/logo-qof-light.png') }}" alt="QofMedia Logo" class="logo-img">
@@ -336,6 +318,7 @@
 
             {{-- Body --}}
             <div class="register-body">
+
                 {{-- Session Status --}}
                 @if(session('status'))
                     <div class="alert alert-success" role="alert">
@@ -359,62 +342,47 @@
                     {{-- Nama Lengkap --}}
                     <div class="mb-3">
                         <label for="name" class="form-label">Nama Lengkap</label>
-                        <div class="input-group">
-                            <span class="input-group-icon">
-                                <i class="bi bi-person"></i>
-                            </span>
-                            <input type="text"
-                                   class="form-control @error('name') is-invalid @enderror"
-                                   id="name"
-                                   name="name"
-                                   value="{{ old('name') }}"
-                                   required
-                                   autofocus
-                                   autocomplete="name"
-                                   placeholder="Masukkan nama lengkap">
-                        </div>
+                        <input type="text"
+                               class="form-control @error('name') is-invalid @enderror"
+                               id="name"
+                               name="name"
+                               value="{{ old('name') }}"
+                               required
+                               autofocus
+                               autocomplete="name"
+                               placeholder="Masukkan nama lengkap">
                         @error('name')
-                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     {{-- Nomor HP/WhatsApp --}}
                     <div class="mb-3">
                         <label for="phone" class="form-label">Nomor HP / WhatsApp</label>
-                        <div class="input-group">
-                            <span class="input-group-icon">
-                                <i class="bi bi-whatsapp"></i>
-                            </span>
-                            <input type="text"
-                                   class="form-control @error('phone') is-invalid @enderror"
-                                   id="phone"
-                                   name="phone"
-                                   value="{{ old('phone') }}"
-                                   placeholder="0812-3456-7890">
-                        </div>
+                        <input type="text"
+                               class="form-control @error('phone') is-invalid @enderror"
+                               id="phone"
+                               name="phone"
+                               value="{{ old('phone') }}"
+                               placeholder="0812-3456-7890">
                         @error('phone')
-                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     {{-- Email --}}
                     <div class="mb-3">
                         <label for="email" class="form-label">Alamat Email</label>
-                        <div class="input-group">
-                            <span class="input-group-icon">
-                                <i class="bi bi-envelope"></i>
-                            </span>
-                            <input type="email"
-                                   class="form-control @error('email') is-invalid @enderror"
-                                   id="email"
-                                   name="email"
-                                   value="{{ old('email') }}"
-                                   required
-                                   autocomplete="username"
-                                   placeholder="contoh@email.com">
-                        </div>
+                        <input type="email"
+                               class="form-control @error('email') is-invalid @enderror"
+                               id="email"
+                               name="email"
+                               value="{{ old('email') }}"
+                               required
+                               autocomplete="username"
+                               placeholder="contoh@email.com">
                         @error('email')
-                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -422,9 +390,6 @@
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <div class="input-group">
-                            <span class="input-group-icon">
-                                <i class="bi bi-lock"></i>
-                            </span>
                             <input type="password"
                                    class="form-control @error('password') is-invalid @enderror"
                                    id="password"
@@ -437,17 +402,14 @@
                             </button>
                         </div>
                         @error('password')
-                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     {{-- Konfirmasi Password --}}
-                    <div class="mb-4">
+                    <div class="mb-3">
                         <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
                         <div class="input-group">
-                            <span class="input-group-icon">
-                                <i class="bi bi-lock-fill"></i>
-                            </span>
                             <input type="password"
                                    class="form-control @error('password_confirmation') is-invalid @enderror"
                                    id="password_confirmation"
@@ -460,7 +422,7 @@
                             </button>
                         </div>
                         @error('password_confirmation')
-                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -471,8 +433,8 @@
                 </form>
 
                 {{-- Login Link --}}
-                <div class="text-center mt-3">
-                    <p style="color: #64748B; font-size: 0.85rem; margin-bottom: 0;">
+                <div class="text-center mt-4">
+                    <p style="color: #64748B; font-size: 0.82rem; margin-bottom: 0;">
                         Sudah punya akun?
                         <a href="{{ route('login') }}" class="text-link">Login di Sini</a>
                     </p>
@@ -483,39 +445,36 @@
 
                 {{-- Back to Home --}}
                 <div class="text-center">
-                    <a href="{{ route('home') }}" style="color: #64748B; text-decoration: none; font-size: 0.82rem; font-weight: 500; transition: all 0.3s;">
+                    <a href="{{ route('home') }}" style="color: #64748B; text-decoration: none; font-size: 0.78rem; font-weight: 500; transition: all 0.3s;">
                         <i class="bi bi-arrow-left me-1"></i> Kembali ke Beranda
                     </a>
                 </div>
+
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            togglePasswordVisibility('password', this);
-        });
-
-        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
-            togglePasswordVisibility('password_confirmation', this);
-        });
-
         function togglePasswordVisibility(inputId, button) {
             const input = document.getElementById(inputId);
             const icon = button.querySelector('i');
-
             if (input.type === 'password') {
                 input.type = 'text';
-                icon.classList.remove('bi-eye');
-                icon.classList.add('bi-eye-slash');
+                icon.classList.replace('bi-eye', 'bi-eye-slash');
             } else {
                 input.type = 'password';
-                icon.classList.remove('bi-eye-slash');
-                icon.classList.add('bi-eye');
+                icon.classList.replace('bi-eye-slash', 'bi-eye');
             }
         }
+
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            togglePasswordVisibility('password', this);
+        });
+
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
+            togglePasswordVisibility('password_confirmation', this);
+        });
     </script>
 </body>
 </html>

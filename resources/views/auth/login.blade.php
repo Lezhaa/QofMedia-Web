@@ -24,7 +24,13 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0D1B2A 0%, #1B3A4B 50%, #0E7A96 100%);
+            /* Update Background menggunakan gambar */
+            background-image: url('{{ asset("images/bg.jpg") }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -44,6 +50,7 @@
             height: 500px;
             background: radial-gradient(circle, rgba(78,184,204,0.15) 0%, transparent 70%);
             border-radius: 50%;
+            z-index: 0;
         }
 
         body::after {
@@ -55,7 +62,20 @@
             height: 400px;
             background: radial-gradient(circle, rgba(168,221,232,0.1) 0%, transparent 70%);
             border-radius: 50%;
+            z-index: 0;
         }
+
+        /* Jika gambar background terlalu terang, Anda bisa mengaktifkan overlay di bawah ini
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 27, 42, 0.6); 
+            z-index: 0;
+        }
+        */
 
         /* ============================================
            LOGIN CARD
@@ -305,6 +325,9 @@
     </style>
 </head>
 <body>
+
+    <!-- Uncomment div overlay di bawah ini jika gambar background terlalu terang agar form tetap jelas -->
+    <!-- <div class="overlay"></div> -->
 
     <div class="login-wrapper">
         <div class="login-card">

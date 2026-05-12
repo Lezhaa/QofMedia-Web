@@ -68,7 +68,7 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.articles.index') }}" class="nav-link {{ request()->routeIs('admin.articles.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-newspaper"></i>
-                        <p>Kelola Artikel</p>
+                        <p>Kelola Informasi</p>
                     </a>
                 </li>
 

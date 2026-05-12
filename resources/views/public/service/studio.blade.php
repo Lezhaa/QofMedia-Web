@@ -193,7 +193,7 @@
 
     .service-card .card-image {
         width: 100%;
-        height: 200px;
+        aspect-ratio: 1 / 1;
         border-radius: 14px;
         object-fit: cover;
         margin-bottom: 16px;
@@ -201,7 +201,7 @@
 
     .card-placeholder {
         width: 100%;
-        height: 200px;
+        aspect-ratio: 1 / 1;
         border-radius: 14px;
         background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
         display: flex;

@@ -70,10 +70,6 @@
                         <span class="stat-label">Tahun Berkarya</span>
                     </div>
                     <div class="stat-item-cuplikan">
-                        <span class="stat-number">100+</span>
-                        <span class="stat-label">Klien Puas</span>
-                    </div>
-                    <div class="stat-item-cuplikan">
                         <span class="stat-number">3</span>
                         <span class="stat-label">Layanan Utama</span>
                     </div>
@@ -146,7 +142,7 @@
 <?php if($latestAlbums->count() > 0): ?>
 <section class="gallery-section">
     <div class="container">
-<div class="text-center scroll-reveal">
+        <div class="text-center scroll-reveal">
             <h2 class="section-title">Galeri Terbaru</h2>
             <p class="section-subtitle">Momen berharga dari kegiatan kami</p>
         </div>

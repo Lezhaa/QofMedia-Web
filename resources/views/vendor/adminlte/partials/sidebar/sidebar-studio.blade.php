@@ -2,7 +2,7 @@
 
     {{-- Brand Logo --}}
     <a href="{{ route('studio.dashboard') }}" class="brand-link">
-        <span class="brand-text font-weight-light"><b>QoF</b> Studio</span>
+        <span class="brand-text font-weight-light"><b>Qof</b> Studio</span>
     </a>
 
     {{-- Sidebar --}}

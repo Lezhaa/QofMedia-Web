@@ -68,7 +68,7 @@
                 <li class="nav-item">
                     <a href="<?php echo e(route('admin.articles.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.articles.*') ? 'active' : ''); ?>">
                         <i class="nav-icon fas fa-newspaper"></i>
-                        <p>Kelola Artikel</p>
+                        <p>Kelola Informasi</p>
                     </a>
                 </li>
 

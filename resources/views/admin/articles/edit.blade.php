@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Edit Artikel')
+@section('title', 'Edit Informasi')
 
 @section('content_header')
-    <h1>Edit Artikel: {{ $article->title }}</h1>
+    <h1>Edit Informasi: {{ $article->title }}</h1>
 @stop
 
 @section('content')
@@ -80,7 +80,7 @@
                 
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Update Artikel
+                        <i class="fas fa-save"></i> Update Informasi
                     </button>
                     <a href="{{ route('admin.articles.index') }}" class="btn btn-secondary">Batal</a>
                 </div>
