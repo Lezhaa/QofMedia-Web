@@ -1,8 +1,8 @@
-@extends('layouts.app')
 
-@section('title', $article->title)
 
-@push('styles')
+<?php $__env->startSection('title', $article->title); ?>
+
+<?php $__env->startPush('styles'); ?>
 <style>
     /* Fix padding body dari layout utama */
     body {
@@ -528,41 +528,41 @@
         }
     }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
-{{-- ============================================
-     HERO SECTION
-     ============================================ --}}
+
 <section class="article-hero">
     <div class="container">
-        {{-- Breadcrumb --}}
+        
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('information.index') }}">Informasi</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ Str::limit($article->title, 50) }}</li>
+                <li class="breadcrumb-item"><a href="<?php echo e(route('information.index')); ?>">Informasi</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><?php echo e(Str::limit($article->title, 50)); ?></li>
             </ol>
         </nav>
 
-        {{-- Category --}}
-        <span class="article-category">{{ $article->category }}</span>
+        
+        <span class="article-category"><?php echo e($article->category); ?></span>
 
-        {{-- Title --}}
-        <h1>{{ $article->title }}</h1>
+        
+        <h1><?php echo e($article->title); ?></h1>
 
-        {{-- Meta --}}
+        
         <div class="article-meta">
             <span>
                 <i class="bi bi-calendar3"></i>
-                {{ $article->published_at->format('d M Y') }}
+                <?php echo e($article->published_at->format('d M Y')); ?>
+
             </span>
-            @if($article->published_at)
+            <?php if($article->published_at): ?>
             <span>
                 <i class="bi bi-clock"></i>
-                {{ $article->published_at->diffForHumans() }}
+                <?php echo e($article->published_at->diffForHumans()); ?>
+
             </span>
-            @endif
+            <?php endif; ?>
             <span>
                 <i class="bi bi-person"></i>
                 Admin QofMedia
@@ -571,53 +571,52 @@
     </div>
 </section>
 
-{{-- ============================================
-     CONTENT SECTION
-     ============================================ --}}
+
 <section class="article-content-section">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto">
 
-                {{-- Featured Image --}}
-                @if($article->image)
+                
+                <?php if($article->image): ?>
                     <div class="article-main-image">
-                        <img src="{{ asset('storage/' . $article->image) }}" alt="{{ $article->title }}" loading="lazy">
+                        <img src="<?php echo e(asset('storage/' . $article->image)); ?>" alt="<?php echo e($article->title); ?>" loading="lazy">
                     </div>
-                @else
+                <?php else: ?>
                     <div class="article-placeholder-img">
                         <i class="bi bi-newspaper"></i>
                     </div>
-                @endif
+                <?php endif; ?>
 
-                {{-- Article Content --}}
+                
                 <div class="article-content">
-                    {!! nl2br(e($article->content)) !!}
+                    <?php echo nl2br(e($article->content)); ?>
+
                 </div>
 
-                {{-- Share Section --}}
+                
                 <div class="share-section">
                     <h5><i class="bi bi-share me-2"></i>Bagikan Artikel Ini</h5>
                     <div class="share-buttons">
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" 
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo e(urlencode(request()->url())); ?>" 
                            target="_blank" 
                            rel="noopener noreferrer"
                            class="btn-share facebook">
                             <i class="bi bi-facebook"></i> Facebook
                         </a>
-                        <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($article->title) }}" 
+                        <a href="https://twitter.com/intent/tweet?url=<?php echo e(urlencode(request()->url())); ?>&text=<?php echo e(urlencode($article->title)); ?>" 
                            target="_blank" 
                            rel="noopener noreferrer"
                            class="btn-share twitter">
                             <i class="bi bi-twitter-x"></i> Twitter
                         </a>
-                        <a href="https://api.whatsapp.com/send?text={{ urlencode($article->title . ' ' . request()->url()) }}" 
+                        <a href="https://api.whatsapp.com/send?text=<?php echo e(urlencode($article->title . ' ' . request()->url())); ?>" 
                            target="_blank" 
                            rel="noopener noreferrer"
                            class="btn-share whatsapp">
                             <i class="bi bi-whatsapp"></i> WhatsApp
                         </a>
-                        <a href="https://t.me/share/url?url={{ urlencode(request()->url()) }}&text={{ urlencode($article->title) }}" 
+                        <a href="https://t.me/share/url?url=<?php echo e(urlencode(request()->url())); ?>&text=<?php echo e(urlencode($article->title)); ?>" 
                            target="_blank" 
                            rel="noopener noreferrer"
                            class="btn-share telegram">
@@ -626,38 +625,38 @@
                     </div>
                 </div>
 
-                {{-- Related Articles --}}
-                @if($relatedArticles->count() > 0)
+                
+                <?php if($relatedArticles->count() > 0): ?>
                     <div class="related-section">
                         <h4><i class="bi bi-link-45deg me-2"></i>Artikel Terkait</h4>
                         <div class="row g-4">
-                            @foreach($relatedArticles->take(3) as $related)
+                            <?php $__currentLoopData = $relatedArticles->take(3); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $related): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <div class="col-md-4">
-                                    <a href="{{ route('information.show', $related->slug) }}" class="text-decoration-none">
+                                    <a href="<?php echo e(route('information.show', $related->slug)); ?>" class="text-decoration-none">
                                         <div class="related-card h-100">
-                                            @if($related->image)
+                                            <?php if($related->image): ?>
                                                 <div class="related-card-img">
-                                                    <img src="{{ asset('storage/' . $related->image) }}" alt="{{ $related->title }}" loading="lazy">
+                                                    <img src="<?php echo e(asset('storage/' . $related->image)); ?>" alt="<?php echo e($related->title); ?>" loading="lazy">
                                                 </div>
-                                            @else
+                                            <?php else: ?>
                                                 <div class="related-placeholder">
                                                     <i class="bi bi-newspaper"></i>
                                                 </div>
-                                            @endif
+                                            <?php endif; ?>
                                             <div class="card-body">
-                                                <h6 class="card-title">{{ $related->title }}</h6>
+                                                <h6 class="card-title"><?php echo e($related->title); ?></h6>
                                             </div>
                                         </div>
                                     </a>
                                 </div>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
                     </div>
-                @endif
+                <?php endif; ?>
 
-                {{-- Back Button --}}
+                
                 <div class="text-center mt-5">
-                    <a href="{{ route('information.index') }}" class="btn btn-outline-primary rounded-pill px-4">
+                    <a href="<?php echo e(route('information.index')); ?>" class="btn btn-outline-primary rounded-pill px-4">
                         <i class="bi bi-arrow-left me-2"></i>Kembali ke Informasi
                     </a>
                 </div>
@@ -667,4 +666,5 @@
     </div>
 </section>
 
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\qofmedia-web\resources\views/public/information/show.blade.php ENDPATH**/ ?>

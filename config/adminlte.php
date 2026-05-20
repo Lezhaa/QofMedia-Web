@@ -86,10 +86,10 @@ return [
     'auth_logo' => [
         'enabled' => false,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'images/logo/logo-qof.png',
             'alt' => 'Auth Logo',
             'class' => '',
-            'width' => 50,
+            'width' => 'auto',
             'height' => 50,
         ],
     ],
@@ -113,10 +113,10 @@ return [
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-            'alt' => 'AdminLTE Preloader Image',
+            'path' => 'images/logo/logo-qof.png',
+            'alt' => 'Qof Media',
             'effect' => 'animation__shake',
-            'width' => 60,
+            'width' => 'auto',
             'height' => 60,
         ],
     ],

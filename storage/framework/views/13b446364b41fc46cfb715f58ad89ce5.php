@@ -4,23 +4,24 @@
             <!-- Kiri: Logo -->
             <div class="footer-logo">
                 <?php
-                    $logoPath = setting('site_logo', 'images/logo/logo-qof-light.png');
-                    $logoFullPath = public_path($logoPath);
+                    $logoPath = \App\Models\Setting::where('key', 'site_logo')->value('value');
+                    $logoFullPath = $logoPath ? public_path('storage/' . $logoPath) : null;
                 ?>
                 
-                <?php if(file_exists($logoFullPath) && !empty($logoPath)): ?>
-                    <img src="<?php echo e(asset($logoPath)); ?>" alt="QofMedia">
+                <?php if($logoPath && file_exists($logoFullPath)): ?>
+                    <img src="<?php echo e(asset('storage/' . $logoPath)); ?>" alt="QofMedia">
                 <?php else: ?>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <i class="bi bi-camera-reels-fill" style="color: #6366f1; font-size: 1.5rem;"></i>
+                        <i class="bi bi-camera-reels-fill" style="color: var(--accent-teal-glow, #4EB8CC); font-size: 1.5rem;"></i>
                         <span style="color: white; font-weight: 600; font-size: 1.1rem;">QofMedia</span>
                     </div>
                 <?php endif; ?>
             </div>
             
-            <!-- Tengah: Copyright -->
+            <!-- Tengah: Copyright (Bisa diedit dari Settings) -->
             <div class="footer-copyright">
-                Copyright © <?php echo e(date('Y')); ?> QofMedia | Powered by QofMedia
+                <?php echo e(\App\Models\Setting::where('key', 'footer_copyright')->value('value') ?: 'Copyright © ' . date('Y') . ' QofMedia | Powered by QofMedia'); ?>
+
             </div>
             
             <!-- Kanan: Social Media Icons -->
@@ -30,31 +31,31 @@
                         ->pluck('value', 'key');
                 ?>
                 
-                <?php if($socials['facebook'] ?? false): ?>
+                <?php if(!empty($socials['facebook'])): ?>
                     <a href="<?php echo e($socials['facebook']); ?>" target="_blank" title="Facebook">
                         <i class="bi bi-facebook"></i>
                     </a>
                 <?php endif; ?>
                 
-                <?php if($socials['instagram'] ?? false): ?>
+                <?php if(!empty($socials['instagram'])): ?>
                     <a href="<?php echo e($socials['instagram']); ?>" target="_blank" title="Instagram">
                         <i class="bi bi-instagram"></i>
                     </a>
                 <?php endif; ?>
                 
-                <?php if($socials['twitter'] ?? false): ?>
+                <?php if(!empty($socials['twitter'])): ?>
                     <a href="<?php echo e($socials['twitter']); ?>" target="_blank" title="Twitter/X">
                         <i class="bi bi-twitter-x"></i>
                     </a>
                 <?php endif; ?>
                 
-                <?php if($socials['tiktok'] ?? false): ?>
+                <?php if(!empty($socials['tiktok'])): ?>
                     <a href="<?php echo e($socials['tiktok']); ?>" target="_blank" title="TikTok">
                         <i class="bi bi-tiktok"></i>
                     </a>
                 <?php endif; ?>
                 
-                <?php if($socials['youtube'] ?? false): ?>
+                <?php if(!empty($socials['youtube'])): ?>
                     <a href="<?php echo e($socials['youtube']); ?>" target="_blank" title="YouTube">
                         <i class="bi bi-youtube"></i>
                     </a>

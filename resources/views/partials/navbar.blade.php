@@ -1,16 +1,21 @@
 <nav class="navbar navbar-expand-lg">
     <div class="container">
         <a class="navbar-brand" href="{{ route('home') }}">
-            @php
-                $logoPath = setting('site_logo', 'images/logo/logo-qof-light.png');
-            @endphp
-            @if(file_exists(public_path($logoPath)))
-                <img src="{{ asset($logoPath) }}" alt="QofMedia">
-            @else
-                <i class="bi bi-camera-reels-fill me-1"></i>
-                <span>QofMedia</span>
-            @endif
-        </a>
+    @php
+        $logoPath = \App\Models\Setting::where('key', 'site_logo')->value('value');
+        $logoFullPath = $logoPath ? public_path('storage/' . $logoPath) : null;
+        $defaultLogo = 'images/logo/logo-qof-light.png';
+    @endphp
+    
+    @if($logoPath && file_exists($logoFullPath))
+        <img src="{{ asset('storage/' . $logoPath) }}" alt="QofMedia">
+    @elseif(file_exists(public_path($defaultLogo)))
+        <img src="{{ asset($defaultLogo) }}" alt="QofMedia">
+    @else
+        <i class="bi bi-camera-reels-fill me-1"></i>
+        <span>QofMedia</span>
+    @endif
+</a>
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="padding: 0.25rem 0.5rem;">
             <span class="navbar-toggler-icon"></span>
         </button>

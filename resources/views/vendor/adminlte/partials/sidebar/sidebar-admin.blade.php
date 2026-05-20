@@ -50,13 +50,6 @@
 
                 {{-- Manajemen Konten --}}
                 <li class="nav-header">MANAJEMEN KONTEN</li>
-                
-                <li class="nav-item">
-                    <a href="{{ route('admin.home.edit') }}" class="nav-link {{ request()->routeIs('admin.home.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-home"></i>
-                        <p>Kelola Beranda</p>
-                    </a>
-                </li>
 
                 <li class="nav-item">
                     <a href="{{ route('admin.albums.index') }}" class="nav-link {{ request()->routeIs('admin.albums.*') ? 'active' : '' }}">
