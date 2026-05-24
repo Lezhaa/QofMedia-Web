@@ -309,7 +309,7 @@
 <div class="modal fade" id="orderModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 rounded-4">
-            <form action="{{ route('order.store') }}" method="POST">
+            <form action="{{ route('order.store') }}" method="POST" enctype="multipart/form-data" id="orderForm">
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
                 <input type="hidden" name="variant_id" id="modalVariantId">
@@ -332,9 +332,23 @@
                             <input type="text" name="pemesan_phone" class="form-control" value="{{ Auth::user()->phone }}" required>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Provinsi <span class="text-danger">*</span></label>
+                            <input type="text" name="provinsi" class="form-control" placeholder="Contoh: Jawa Timur" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Kab / Kota <span class="text-danger">*</span></label>
+                            <input type="text" name="kab_kota" class="form-control" placeholder="Contoh: Kota Malang" required>
+                        </div>
+                    </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Alamat <span class="text-danger">*</span></label>
-                        <textarea name="alamat" class="form-control" rows="3" required></textarea>
+                        <label class="form-label fw-semibold">Alamat Detail <span class="text-danger">*</span></label>
+                        <textarea name="alamat_detail" class="form-control" rows="3" placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan, kecamatan..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Kode Pos <span class="text-danger">*</span></label>
+                        <input type="text" name="kode_pos" class="form-control" placeholder="Contoh: 65141" maxlength="10" required>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -342,8 +356,34 @@
                             <input type="number" name="qty" id="modalQty" class="form-control" min="1" value="1" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">Total</label>
+                            <label class="form-label fw-semibold">Total Pembayaran</label>
                             <input type="text" id="modalTotal" class="form-control bg-light" readonly value="Rp {{ number_format($product->price, 0, ',', '.') }}">
+                            <input type="hidden" id="hiddenTotal" name="total_price" value="{{ $product->price }}">
+                        </div>
+                    </div>
+                    {{-- Info transfer manual --}}
+                    <div class="mb-3" style="background:#FEF9EC; border:1px solid #FDE68A; border-radius:12px; padding:12px 16px; font-size:0.82rem; color:#78350F;">
+                        <strong><i class="bi bi-bank me-1"></i> Cara Pembayaran</strong><br>
+                        Upload bukti transfer setelah melakukan pembayaran. Admin akan memverifikasi dan mengkonfirmasi pesanan Anda dalam 1×24 jam.
+                    </div>
+                    <input type="hidden" name="payment_method" value="manual_transfer">
+
+                    {{-- Form transfer manual --}}
+                    <div class="mb-3">
+                        <div style="background:#FEF9EC; border:1px solid #FDE68A; border-radius:12px; padding:12px 16px; margin-bottom:14px; font-size:0.82rem; color:#78350F;">
+                            <strong><i class="bi bi-bank me-1"></i> Info Rekening Transfer</strong><br>
+                            Transfer ke: <strong>BCA 1234567890 a/n QofMedia</strong><br>
+                            Nominal: <strong id="transferAmount">Rp {{ number_format($product->price, 0, ',', '.') }}</strong><br>
+                            <span style="font-size:0.75rem; color:#92400E;">Setelah transfer, upload bukti di bawah. Admin memverifikasi dalam 1×24 jam.</span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Upload Bukti Transfer <span class="text-danger">*</span></label>
+                            <input type="file" name="payment_proof" id="payment_proof" class="form-control" accept="image/*">
+                            <div class="form-text">Format: JPG/PNG, max 2MB</div>
+                        </div>
+                        <div>
+                            <label class="form-label fw-semibold">Pesan ke Admin <span class="text-danger">*</span></label>
+                            <textarea name="payment_message" id="payment_message" class="form-control" rows="2" placeholder="Contoh: Sudah transfer dari BCA an. Budi Santoso"></textarea>
                         </div>
                     </div>
                     <div class="mb-2">
@@ -353,7 +393,9 @@
                 </div>
                 <div class="modal-footer px-4 pb-4 pt-3 border-0">
                     <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn-submit-modal"><i class="bi bi-send me-2"></i> Kirim Pesanan</button>
+                    <button type="button" class="btn-submit-modal" onclick="submitOrder()">
+                        <i class="bi bi-send me-2"></i> Kirim Pesanan
+                    </button>
                 </div>
             </form>
         </div>
@@ -523,6 +565,8 @@
         updateModalTotal();
     });
 
+
+
     function updateModalTotal(priceOverride) {
         const qty = parseInt(document.getElementById('modalQty')?.value) || 1;
         let price = priceOverride || {{ $product->price }};
@@ -535,8 +579,49 @@
             );
             if (v) price = v.price;
         @endif
+
+        const total = qty * price;
+        const formatted = 'Rp ' + new Intl.NumberFormat('id-ID').format(total);
         const totalEl = document.getElementById('modalTotal');
-        if (totalEl) totalEl.value = 'Rp ' + new Intl.NumberFormat('id-ID').format(qty * price);
+        const hiddenEl = document.getElementById('hiddenTotal');
+        const transferAmtEl = document.getElementById('transferAmount');
+        if (totalEl) totalEl.value = formatted;
+        if (hiddenEl) hiddenEl.value = total;
+        if (transferAmtEl) transferAmtEl.textContent = formatted;
     }
+
+    function submitOrder() {
+        const form = document.getElementById('orderForm');
+
+        // Validasi bukti pembayaran
+        const proof = document.getElementById('payment_proof');
+        if (!proof.files || proof.files.length === 0) {
+            proof.focus();
+            proof.style.borderColor = '#DC2626';
+            alert('Mohon upload bukti pembayaran terlebih dahulu.');
+            return;
+        }
+
+        // Validasi produk kaos: harus pilih varian lengkap
+        @if($product->type === 'kaos')
+        const variantId = document.getElementById('modalVariantId').value;
+        if (!variantId) {
+            alert('Mohon pilih varian (Series, Motif, Warna, Ukuran) terlebih dahulu.');
+            return;
+        }
+        @endif
+
+        // Disable tombol supaya tidak double-submit
+        const btn = document.querySelector('.btn-submit-modal');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
+
+        form.submit();
+    }
+
+    // Reset border merah saat field diubah
+    document.getElementById('payment_proof')?.addEventListener('change', function() {
+        this.style.borderColor = '';
+    });
 </script>
 @endpush

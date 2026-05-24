@@ -15,6 +15,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
     })
+
+    ->withMiddleware(function (Middleware $middleware) {
+        // Tambahkan ini untuk mengecualikan route dari CSRF
+        $middleware->validateCsrfTokens(except: [
+            'payment/callback',
+        ]);
+    })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

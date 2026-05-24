@@ -99,6 +99,15 @@ class ProductController extends Controller
         return redirect()->route('apparel.products.index')
             ->with('success', 'Produk berhasil diperbarui');
     }
+
+    public function show($id)
+{
+    // Cari produk berdasarkan ID
+    $product = \App\Models\ApparelProduct::findOrFail($id);
+    
+    // Tampilkan view detail produk
+    return view('apparel.products.index', compact('product'));
+}
     
     public function destroy(ApparelProduct $product)
     {

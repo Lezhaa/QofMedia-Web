@@ -222,7 +222,13 @@
     }
     .ord-date i { color: #CBD5E1; font-size: 0.75rem; }
 
-    /* Action button */
+    /* Action buttons */
+    .action-group {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: center;
+    }
     .act-btn {
         display: inline-flex;
         align-items: center;
@@ -238,7 +244,27 @@
         padding: 0 12px;
     }
     .act-btn.detail { background: rgba(14,122,150,0.09); color: #0E7A96; }
+    .act-btn.delete { background: rgba(220,38,38,0.09); color: #DC2626; }
     .act-btn:hover  { filter: brightness(0.88); transform: scale(1.05); text-decoration: none; }
+
+    /* Modal Delete */
+    .modal-danger .modal-header {
+        background: linear-gradient(135deg, #DC2626, #EF4444);
+        color: white;
+        border-bottom: none;
+    }
+    .modal-danger .modal-header .close {
+        color: white;
+        opacity: 0.8;
+    }
+    .modal-danger .modal-header .close:hover { opacity: 1; }
+    .modal-danger .modal-footer .btn-danger {
+        background: #DC2626;
+        border: none;
+    }
+    .modal-danger .modal-footer .btn-danger:hover {
+        background: #B91C1C;
+    }
 
     /* ============================================
        EMPTY STATE
@@ -365,7 +391,7 @@
                             <th>Total</th>
                             <th>Status</th>
                             <th>Tanggal</th>
-                            <th style="width:90px; text-align:center;">Aksi</th>
+                            <th style="width:130px; text-align:center;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -418,10 +444,16 @@
                                     </div>
                                 </td>
                                 <td style="text-align:center;">
-                                    <a href="{{ route('apparel.orders.show', $order) }}"
-                                       class="act-btn detail" title="Detail">
-                                        <i class="fas fa-eye"></i> Detail
-                                    </a>
+                                    <div class="action-group">
+                                        <a href="{{ route('apparel.orders.show', $order) }}"
+                                           class="act-btn detail" title="Detail">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <button type="button" class="act-btn delete" title="Hapus"
+                                                onclick="confirmDelete({{ $order->id }}, '{{ $order->pemesan_name }}')">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
@@ -437,6 +469,42 @@
         @endif
     </div>
 
+    {{-- Modal Konfirmasi Hapus --}}
+    <div class="modal fade modal-danger" id="deleteModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Konfirmasi Hapus Order
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda yakin ingin menghapus order ini?</p>
+                    <div id="deleteOrderInfo" class="mt-2 p-2 bg-light rounded" style="font-size: 0.9rem;">
+                        <!-- Info order akan diisi via JS -->
+                    </div>
+                    <p class="text-danger mt-3 small">
+                        <i class="fas fa-info-circle"></i> Tindakan ini tidak dapat dibatalkan!
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times"></i> Batal
+                    </button>
+                    <form id="deleteForm" method="POST" action="">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash-alt"></i> Ya, Hapus!
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @push('js')
@@ -446,6 +514,20 @@ function filterRows() {
     document.querySelectorAll('.ord-row').forEach(function (row) {
         row.style.display = row.dataset.name.includes(search) ? '' : 'none';
     });
+}
+
+function confirmDelete(orderId, customerName) {
+    // Set form action
+    var form = document.getElementById('deleteForm');
+    form.action = '/apparel/orders/' + orderId;
+    
+    // Set info order di modal
+    var infoDiv = document.getElementById('deleteOrderInfo');
+    infoDiv.innerHTML = '<i class="fas fa-receipt me-1"></i> Order #' + orderId + '<br>' +
+                        '<i class="fas fa-user me-1"></i> Pemesan: <strong>' + customerName + '</strong>';
+    
+    // Tampilkan modal
+    $('#deleteModal').modal('show');
 }
 </script>
 @endpush

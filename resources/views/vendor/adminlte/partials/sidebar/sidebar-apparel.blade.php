@@ -63,6 +63,15 @@
                     </a>
                 </li>
 
+                {{-- Laporan Keuangan --}}
+                <li class="nav-item">
+                    <a href="{{ route('apparel.finance.index') }}" class="nav-link {{ request()->routeIs('apparel.finance.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-chart-line"></i>
+                        <p>Laporan Keuangan</p>
+                    </a>
+                </li>
+
+
                 {{-- Kaos Management --}}
                 <li class="nav-header">MANAJEMEN KAOS</li>
 
