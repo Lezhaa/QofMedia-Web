@@ -53,15 +53,18 @@
                 </li>
             </ul>
             
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-center">
                 @auth
                     @php
                         $user = Auth::user();
                         $isAdmin = $user->hasAnyRole(['admin_qofmedia', 'admin_studio', 'admin_apparel']);
                     @endphp
-                    
+
                     @if($isAdmin)
-                        {{-- Admin: Tampilkan link ke dashboard --}}
+                        {{-- ========================================
+                             ADMIN: tidak dapat bell notifikasi,
+                             langsung tampilkan menu dashboard
+                             ======================================== --}}
                         <li class="nav-item dropdown">
                             <a class="nav-link user-dropdown-toggle" href="#" data-bs-toggle="dropdown">
                                 <i class="bi bi-person-circle"></i>
@@ -87,8 +90,13 @@
                                 </li>
                             </ul>
                         </li>
+
                     @else
-                        {{-- User Biasa: Tampilkan menu Pesanan Saya --}}
+                        {{-- ========================================
+                             USER BIASA: bell notifikasi + menu user
+                             ======================================== --}}
+                        @include('partials.navbar-notifications')
+
                         <li class="nav-item dropdown">
                             <a class="nav-link user-dropdown-toggle" href="#" data-bs-toggle="dropdown">
                                 <i class="bi bi-person-circle"></i>
@@ -109,7 +117,13 @@
                             </ul>
                         </li>
                     @endif
+
                 @else
+                    {{-- ========================================
+                         GUEST: bell notifikasi + tombol login
+                         ======================================== --}}
+                    @include('partials.navbar-notifications')
+
                     <li class="nav-item">
                         <a class="nav-link nav-auth-btn nav-login" href="{{ route('login') }}">Masuk</a>
                     </li>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -38,6 +39,21 @@ class ArticleController extends Controller
         }
         
         Article::create($validated);
+
+        // Otomatis buat notifikasi jika kategori Pengumuman
+        $article = Article::create($validated);
+ 
+        // Otomatis buat notifikasi broadcast jika kategori Pengumuman
+        if (strtolower(trim($validated['category'])) === 'pengumuman') {
+            Notification::create([
+                'user_id' => null, // null = broadcast ke semua (user & guest)
+                'type'    => 'announcement',
+                'title'   => '📢 ' . $validated['title'],
+                'message' => $validated['excerpt'] ?? 'Ada pengumuman baru. Klik untuk membaca selengkapnya.',
+                'url'     => route('information.show', $article->slug),
+                'data'    => ['article_id' => $article->id],
+            ]);
+        }
         
         return redirect()->route('admin.articles.index')
             ->with('success', 'Artikel berhasil ditambahkan');
@@ -69,6 +85,22 @@ class ArticleController extends Controller
         }
         
         $article->update($validated);
+
+        $wasAnnouncement = strtolower(trim($article->getOriginal('category'))) === 'pengumuman';
+        $isNowAnnouncement = strtolower(trim($validated['category'])) === 'pengumuman';
+ 
+        $article->update($validated);
+ 
+        if (!$wasAnnouncement && $isNowAnnouncement) {
+            Notification::create([
+                'user_id' => null,
+                'type'    => 'announcement',
+                'title'   => '📢 ' . $validated['title'],
+                'message' => $validated['excerpt'] ?? 'Ada pengumuman baru. Klik untuk membaca selengkapnya.',
+                'url'     => route('information.show', $article->slug),
+                'data'    => ['article_id' => $article->id],
+            ]);
+        }
         
         return redirect()->route('admin.articles.index')
             ->with('success', 'Artikel berhasil diperbarui');

@@ -18,6 +18,7 @@
 
     {{-- Navbar right links --}}
     <ul class="navbar-nav ml-auto">
+
         {{-- Custom right links --}}
         @yield('content_top_nav_right')
 

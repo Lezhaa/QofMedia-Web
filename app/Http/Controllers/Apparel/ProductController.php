@@ -100,14 +100,11 @@ class ProductController extends Controller
             ->with('success', 'Produk berhasil diperbarui');
     }
 
-    public function show($id)
-{
-    // Cari produk berdasarkan ID
-    $product = \App\Models\ApparelProduct::findOrFail($id);
-    
-    // Tampilkan view detail produk
-    return view('apparel.products.index', compact('product'));
-}
+    public function show(ApparelProduct $product)
+    {
+        $product->load(['category', 'images']);
+        return view('apparel.products.show', compact('product'));
+    }
     
     public function destroy(ApparelProduct $product)
     {

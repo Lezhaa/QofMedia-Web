@@ -218,6 +218,154 @@
         50% { opacity: 0.7; transform: scale(1.1); }
     }
 
+    /* ============================================
+       PRODUCT CARD STYLES
+       ============================================ */
+    .product-card {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        padding: 16px;
+        background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+        border-radius: 16px;
+        border: 1px solid #BAE6FD;
+    }
+    .product-img-wrap {
+        flex-shrink: 0;
+        width: 110px;
+        height: 110px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #E2E8F0;
+        border: 2px solid #fff;
+        box-shadow: 0 4px 12px rgba(14,122,150,0.12);
+    }
+    .product-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .product-img-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #DBEAFE, #BAE6FD);
+        color: #0E7A96;
+        font-size: 2.2rem;
+    }
+    .product-info {
+        flex: 1;
+        min-width: 0;
+    }
+    .product-name {
+        font-weight: 800;
+        color: #0D1B2A;
+        font-size: 1.05rem;
+        margin-bottom: 6px;
+        line-height: 1.3;
+    }
+    .product-variant-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+    .variant-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 50px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        background: white;
+        color: #0E7A96;
+        border: 1px solid #BAE6FD;
+    }
+    .variant-chip i { font-size: 0.65rem; }
+    .product-price-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 10px;
+        border-top: 1px dashed #BAE6FD;
+    }
+    .product-price-unit {
+        font-size: 0.8rem;
+        color: #64748B;
+    }
+    .product-price-unit strong {
+        color: #0E7A96;
+    }
+    .product-qty-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #0E7A96;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+    .product-total {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: white;
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin-top: 10px;
+        border: 1px solid #BAE6FD;
+    }
+    .product-total span { font-size: 0.85rem; color: #64748B; font-weight: 600; }
+    .product-total strong { font-size: 1.05rem; color: #0D1B2A; }
+
+    /* Status badge extended */
+    .status-badge.packing  { background: #EEF9FC; color: #0E7A96; }
+    .status-badge.dikirim  { background: #EDE9FE; color: #5B21B6; }
+    .status-badge.diterima { background: #D1FAE5; color: #065F46; }
+
+    /* Tracking box */
+    .tracking-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        background: #F3F0FF;
+        border: 1px solid #C4B5FD;
+        border-radius: 12px;
+        padding: 12px 16px;
+        margin-top: 8px;
+    }
+    .tracking-note i { color: #7C3AED; flex-shrink: 0; margin-top: 2px; }
+    .tracking-note .tn-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #7C3AED; margin-bottom: 3px; }
+    .tracking-note .tn-code  { font-size: 1rem; font-weight: 800; color: #5B21B6; font-family: monospace; letter-spacing: 0.05em; }
+
+    /* Btn diterima */
+    .btn-diterima {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 14px 20px;
+        background: linear-gradient(135deg, #059669, #34D399);
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.25s;
+        margin-top: 16px;
+    }
+    .btn-diterima:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(5,150,105,0.35); color: #fff; }
+
     /* Badge bukti */
     .proof-badge {
         display: inline-flex;
@@ -252,112 +400,144 @@
                     <h5><i class="bi bi-diagram-3"></i> Timeline Pesanan</h5>
                     
                     @php
-                        // Tentukan status timeline
+                        $proofValidated = $order->payment_proof_validated ?? 'pending';
+                        $doneStatuses   = ['disetujui','packing','dikirim','diterima'];
+                        $isApproved     = in_array($order->status, $doneStatuses);
+
                         $timeline = [];
-                        
+
                         // 1. Order Dibuat
                         $timeline[] = [
-                            'title' => 'Pesanan Dibuat',
-                            'icon' => 'bi bi-cart-plus',
-                            'date' => $order->created_at,
-                            'completed' => true,
-                            'description' => 'Pesanan berhasil dibuat dan menunggu konfirmasi pembayaran.'
+                            'title'       => 'Pesanan Dibuat',
+                            'icon'        => 'bi bi-cart-plus',
+                            'date'        => $order->created_at,
+                            'completed'   => true,
+                            'description' => 'Pesanan berhasil dibuat dan menunggu konfirmasi pembayaran.',
                         ];
-                        
-                        // 2. Upload Bukti Transfer (jika ada)
+
+                        // 2. Upload Bukti Transfer
                         if ($order->payment_proof) {
                             $timeline[] = [
-                                'title' => 'Bukti Transfer Diunggah',
-                                'icon' => 'bi bi-file-image',
-                                'date' => $order->updated_at, // waktu upload bukti
-                                'completed' => true,
-                                'description' => 'Bukti pembayaran telah diunggah oleh pemesan.'
+                                'title'       => 'Bukti Transfer Diunggah',
+                                'icon'        => 'bi bi-file-image',
+                                'date'        => null,
+                                'completed'   => true,
+                                'description' => 'Bukti pembayaran telah diunggah.',
                             ];
                         } else {
                             $timeline[] = [
-                                'title' => 'Menunggu Upload Bukti Transfer',
-                                'icon' => 'bi bi-clock-history',
-                                'date' => null,
-                                'completed' => false,
-                                'active' => $order->status == 'menunggu' && !$order->payment_proof,
-                                'description' => 'Silakan unggah bukti transfer untuk memproses pesanan.'
+                                'title'       => 'Menunggu Upload Bukti Transfer',
+                                'icon'        => 'bi bi-clock-history',
+                                'date'        => null,
+                                'completed'   => false,
+                                'active'      => $order->status == 'menunggu',
+                                'description' => 'Silakan unggah bukti transfer untuk memproses pesanan.',
                             ];
                         }
-                        
-                        // 3. Validasi Bukti Transfer (jika sudah divalidasi)
-                        $proofValidated = $order->payment_proof_validated ?? 'pending';
-                        if ($order->payment_proof && $proofValidated != 'pending') {
-                            $isValid = $proofValidated == 'valid';
+
+                        // 3. Validasi Bukti
+                        if ($order->payment_proof && $proofValidated !== 'pending') {
+                            $isValid = $proofValidated === 'valid';
                             $timeline[] = [
-                                'title' => $isValid ? '✅ Bukti Transfer Valid' : '❌ Bukti Transfer Tidak Valid',
-                                'icon' => $isValid ? 'bi bi-check-circle-fill' : 'bi bi-x-circle-fill',
-                                'date' => $order->updated_at,
-                                'completed' => true,
-                                'isValid' => $isValid,
-                                'description' => $isValid 
-                                    ? 'Bukti pembayaran telah diverifikasi dan dinyatakan valid.' 
-                                    : 'Bukti pembayaran dinyatakan tidak valid. Silakan hubungi admin.',
+                                'title'      => $isValid ? 'Bukti Transfer Valid ✅' : 'Bukti Transfer Tidak Valid ❌',
+                                'icon'       => $isValid ? 'bi bi-check-circle-fill' : 'bi bi-x-circle-fill',
+                                'date'       => null,
+                                'completed'  => true,
+                                'isRejected' => !$isValid,
+                                'description'=> $isValid
+                                    ? 'Bukti pembayaran telah diverifikasi admin.'
+                                    : 'Bukti tidak valid. Hubungi admin.',
                             ];
-                        } elseif ($order->payment_proof && $proofValidated == 'pending' && $order->status == 'menunggu') {
+                        } elseif ($order->payment_proof && $proofValidated === 'pending' && $order->status === 'menunggu') {
                             $timeline[] = [
-                                'title' => 'Menunggu Validasi Bukti Transfer',
-                                'icon' => 'bi bi-hourglass-split',
-                                'date' => null,
-                                'completed' => false,
-                                'active' => true,
-                                'description' => 'Admin sedang memverifikasi bukti transfer Anda.'
+                                'title'       => 'Menunggu Validasi Admin',
+                                'icon'        => 'bi bi-hourglass-split',
+                                'date'        => null,
+                                'completed'   => false,
+                                'active'      => true,
+                                'description' => 'Admin sedang memverifikasi bukti transfer Anda.',
                             ];
                         }
-                        
-                        // 4. Status Order Final
-                        if ($order->status == 'disetujui') {
+
+                        // 4. Pesanan Disetujui
+                        if ($isApproved) {
                             $timeline[] = [
-                                'title' => '✅ Pesanan Disetujui',
-                                'icon' => 'bi bi-check2-circle',
-                                'date' => $order->updated_at,
-                                'completed' => true,
-                                'description' => 'Pesanan Anda telah disetujui dan akan segera diproses untuk packing.'
+                                'title'       => 'Pesanan Disetujui ✅',
+                                'icon'        => 'bi bi-check2-circle',
+                                'date'        => $order->paid_at,
+                                'completed'   => true,
+                                'description' => 'Pembayaran dikonfirmasi. Pesanan sedang diproses.',
                             ];
-                            
-                            // 5. Proses Packing (estimasi)
+                        } elseif ($order->status === 'ditolak') {
                             $timeline[] = [
-                                'title' => '📦 Proses Packing',
-                                'icon' => 'bi bi-box-seam',
-                                'date' => null,
-                                'completed' => false,
-                                'upcoming' => true,
-                                'description' => 'Pesanan sedang disiapkan untuk pengiriman.'
+                                'title'       => 'Pesanan Ditolak ❌',
+                                'icon'        => 'bi bi-x-circle',
+                                'date'        => $order->updated_at,
+                                'completed'   => true,
+                                'isRejected'  => true,
+                                'description' => 'Pesanan ditolak. ' . ($order->catatan_admin ? 'Alasan: ' . $order->catatan_admin : 'Hubungi admin untuk info lebih lanjut.'),
                             ];
-                        } elseif ($order->status == 'ditolak') {
+                        }
+
+                        // 5. Proses Packing
+                        if (in_array($order->status, ['packing','dikirim','diterima'])) {
                             $timeline[] = [
-                                'title' => '❌ Pesanan Ditolak',
-                                'icon' => 'bi bi-x-circle',
-                                'date' => $order->updated_at,
-                                'completed' => true,
-                                'isRejected' => true,
-                                'description' => 'Pesanan ditolak. ' . ($order->catatan_admin ? 'Alasan: ' . $order->catatan_admin : 'Silakan hubungi admin untuk informasi lebih lanjut.')
+                                'title'       => 'Sedang Dipacking 📦',
+                                'icon'        => 'bi bi-box-seam',
+                                'date'        => $order->packing_at ? \Carbon\Carbon::parse($order->packing_at) : null,
+                                'completed'   => true,
+                                'description' => 'Pesanan Anda sedang disiapkan dan dikemas.',
                             ];
-                        } else {
-                            // Status masih menunggu setelah upload bukti
-                            if ($order->payment_proof && $proofValidated == 'pending') {
-                                $timeline[] = [
-                                    'title' => 'Menunggu Konfirmasi Admin',
-                                    'icon' => 'bi bi-clock',
-                                    'date' => null,
-                                    'completed' => false,
-                                    'active' => true,
-                                    'description' => 'Admin akan segera mengkonfirmasi pesanan Anda setelah bukti transfer divalidasi.'
-                                ];
-                            } elseif (!$order->payment_proof) {
-                                $timeline[] = [
-                                    'title' => 'Menunggu Pembayaran',
-                                    'icon' => 'bi bi-credit-card',
-                                    'date' => null,
-                                    'completed' => false,
-                                    'active' => true,
-                                    'description' => 'Lakukan pembayaran dan unggah bukti transfer untuk memproses pesanan.'
-                                ];
-                            }
+                        } elseif ($order->status === 'disetujui') {
+                            $timeline[] = [
+                                'title'       => 'Proses Packing',
+                                'icon'        => 'bi bi-box-seam',
+                                'date'        => null,
+                                'completed'   => false,
+                                'active'      => true,
+                                'description' => 'Pesanan Anda sedang disiapkan untuk dikemas.',
+                            ];
+                        }
+
+                        // 6. Pengiriman
+                        if (in_array($order->status, ['dikirim','diterima'])) {
+                            $timeline[] = [
+                                'title'          => 'Pesanan Dikirim 🚚',
+                                'icon'           => 'bi bi-truck',
+                                'date'           => $order->shipped_at ? \Carbon\Carbon::parse($order->shipped_at) : null,
+                                'completed'      => true,
+                                'description'    => 'Pesanan dalam perjalanan ke alamat Anda.',
+                                'tracking'       => $order->tracking_number,
+                            ];
+                        } elseif ($order->status === 'packing') {
+                            $timeline[] = [
+                                'title'       => 'Menunggu Pengiriman',
+                                'icon'        => 'bi bi-truck',
+                                'date'        => null,
+                                'completed'   => false,
+                                'active'      => true,
+                                'description' => 'Pesanan akan segera dikirim oleh admin.',
+                            ];
+                        }
+
+                        // 7. Diterima
+                        if ($order->status === 'diterima') {
+                            $timeline[] = [
+                                'title'       => 'Pesanan Diterima 🏠',
+                                'icon'        => 'bi bi-house-check',
+                                'date'        => $order->received_at ? \Carbon\Carbon::parse($order->received_at) : null,
+                                'completed'   => true,
+                                'description' => 'Pesanan sudah sampai dan diterima. Terima kasih!',
+                            ];
+                        } elseif ($order->status === 'dikirim') {
+                            $timeline[] = [
+                                'title'       => 'Konfirmasi Penerimaan',
+                                'icon'        => 'bi bi-house-check',
+                                'date'        => null,
+                                'completed'   => false,
+                                'active'      => true,
+                                'description' => 'Klik tombol di bawah setelah paket Anda diterima.',
+                            ];
                         }
                     @endphp
 
@@ -381,7 +561,7 @@
                                     @if(isset($item['date']) && $item['date'])
                                         <div class="timeline-date">
                                             <i class="bi bi-calendar3"></i>
-                                            {{ $item['date']->format('d M Y, H:i') }} WIB
+                                            {{ \Carbon\Carbon::parse($item['date'])->format('d M Y, H:i') }} WIB
                                         </div>
                                     @endif
                                     @if(isset($item['description']))
@@ -389,9 +569,106 @@
                                             {{ $item['description'] }}
                                         </div>
                                     @endif
+                                    @if(isset($item['tracking']) && $item['tracking'])
+                                        <div class="tracking-note">
+                                            <i class="bi bi-upc-scan"></i>
+                                            <div>
+                                                <div class="tn-label">Nomor Resi</div>
+                                                <div class="tn-code">{{ $item['tracking'] }}</div>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach
+                    </div>
+                </div>
+
+                {{-- Tombol Konfirmasi Diterima (hanya saat status dikirim) --}}
+                @if($order->status === 'dikirim')
+                <div class="detail-card" style="border: 2px solid #C4B5FD; background: linear-gradient(135deg, #F5F3FF, #EDE9FE);">
+                    <h5><i class="bi bi-house-check" style="color:#7C3AED;"></i> <span style="color:#5B21B6;">Sudah Sampai?</span></h5>
+                    <p class="text-muted small mb-0">Jika paket Anda sudah sampai di rumah, konfirmasikan di sini agar pesanan ditandai selesai.</p>
+                    @if($order->tracking_number)
+                        <div class="tracking-note" style="margin-top:12px; margin-bottom:0;">
+                            <i class="bi bi-upc-scan"></i>
+                            <div>
+                                <div class="tn-label">Nomor Resi Pengiriman</div>
+                                <div class="tn-code">{{ $order->tracking_number }}</div>
+                            </div>
+                        </div>
+                    @endif
+                    <form action="{{ route('user.orders.diterima', $order) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn-diterima"
+                                onclick="return confirm('Konfirmasi bahwa pesanan sudah Anda terima?')">
+                            <i class="bi bi-house-check-fill"></i> Pesanan Sudah Diterima
+                        </button>
+                    </form>
+                </div>
+                @endif
+
+                {{-- Produk yang Dipesan --}}
+                <div class="detail-card">
+                    <h5><i class="bi bi-bag-check"></i> Produk yang Dipesan</h5>
+                    @php
+                        $product  = $order->product;
+                        $variant  = $order->variant;
+                        $price    = $variant->price ?? $product->price ?? 0;
+                        $total    = $price * $order->qty;
+                        // Gambar dari relasi product_images (sorted by order)
+                        $imgPath  = $product?->images->sortBy('order')->first()?->image ?? null;
+                    @endphp
+
+                    <div class="product-card">
+                        {{-- Gambar Produk --}}
+                        <div class="product-img-wrap">
+                            @if($imgPath)
+                                <img src="{{ asset('storage/' . $imgPath) }}"
+                                     alt="{{ $product->name ?? 'Produk' }}"
+                                     onerror="this.parentElement.innerHTML='<div class=\'product-img-placeholder\'><i class=\'bi bi-image\'></i></div>'">
+                            @else
+                                <div class="product-img-placeholder">
+                                    <i class="bi bi-box-seam"></i>
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- Info Produk --}}
+                        <div class="product-info">
+                            <div class="product-name">{{ $product->name ?? 'Produk tidak ditemukan' }}</div>
+
+                            {{-- Variant chips --}}
+                            @if($variant)
+                                <div class="product-variant-chips">
+                                    @if($variant->size)
+                                        <span class="variant-chip"><i class="bi bi-rulers"></i> {{ $variant->size }}</span>
+                                    @endif
+                                    @if($variant->color)
+                                        <span class="variant-chip"><i class="bi bi-palette"></i> {{ $variant->color }}</span>
+                                    @endif
+                                    @if($variant->sleeve_type)
+                                        <span class="variant-chip"><i class="bi bi-person-standing"></i> {{ $variant->sleeve_type }}</span>
+                                    @endif
+                                </div>
+                            @endif
+
+                            {{-- Harga satuan & qty --}}
+                            <div class="product-price-row">
+                                <div class="product-price-unit">
+                                    Harga satuan: <strong>Rp {{ number_format($price, 0, ',', '.') }}</strong>
+                                </div>
+                                <div class="product-qty-badge">
+                                    <i class="bi bi-layers"></i> × {{ $order->qty }}
+                                </div>
+                            </div>
+
+                            {{-- Total --}}
+                            <div class="product-total">
+                                <span>Total Harga</span>
+                                <strong style="color:#0E7A96;">Rp {{ number_format($total, 0, ',', '.') }}</strong>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -458,9 +735,12 @@
                 <div class="detail-card">
                     <h5><i class="bi bi-clock-history"></i> Status</h5>
                     <span class="status-badge {{ $order->status }}">
-                        @if($order->status == 'menunggu') Menunggu Konfirmasi
+                        @if($order->status == 'menunggu')     Menunggu Konfirmasi
                         @elseif($order->status == 'disetujui') Disetujui
-                        @elseif($order->status == 'ditolak') Ditolak
+                        @elseif($order->status == 'packing')  Sedang Dipacking
+                        @elseif($order->status == 'dikirim')  Dalam Pengiriman
+                        @elseif($order->status == 'diterima') Pesanan Diterima
+                        @elseif($order->status == 'ditolak')  Ditolak
                         @else {{ $order->status }}
                         @endif
                     </span>

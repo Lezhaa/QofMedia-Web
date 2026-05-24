@@ -32,6 +32,10 @@ class Order extends Model
         'payment_proof_validated',
         'payment_message', 
         'paid_at',
+        'tracking_number',
+        'packing_at',
+        'shipped_at',
+        'received_at',
     ];
 
     protected $casts = [
@@ -71,6 +75,9 @@ class Order extends Model
         return match($this->status) {
             'menunggu'  => 'warning',
             'disetujui' => 'success',
+            'packing'   => 'info',
+            'dikirim'   => 'primary',
+            'diterima'  => 'success',
             'ditolak'   => 'danger',
             default     => 'secondary',
         };
@@ -81,6 +88,9 @@ class Order extends Model
         return match($this->status) {
             'menunggu'  => 'Menunggu Konfirmasi',
             'disetujui' => 'Disetujui',
+            'packing'   => 'Sedang Dipacking',
+            'dikirim'   => 'Sudah Dikirim',
+            'diterima'  => 'Pesanan Diterima',
             'ditolak'   => 'Ditolak',
             default     => $this->status,
         };

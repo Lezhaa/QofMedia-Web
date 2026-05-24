@@ -28,7 +28,7 @@ class FinanceController extends Controller
             });
 
         $orders = Order::where('payment_status', 'paid')
-            ->select('id', 'pemesan_name', 'updated_at', 'total_price', 'payment_proof', 'payment_proof_validated')
+            ->select('id', 'pemesan_name', 'paid_at', 'updated_at', 'total_price', 'payment_proof', 'payment_proof_validated')
             ->latest('paid_at')
             ->paginate(20);
 

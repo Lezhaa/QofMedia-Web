@@ -5,6 +5,7 @@ use App\Http\Controllers\PublicController;
 use App\Http\Controllers\StudioPublicController;
 use App\Http\Controllers\ApparelPublicController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Studio\DashboardController as StudioDashboardController;
 use App\Http\Controllers\Apparel\DashboardController as ApparelDashboardController;
@@ -48,6 +49,26 @@ Route::post('/kontak', [PublicController::class, 'sendContact'])->name('contact.
 
 /*
 |--------------------------------------------------------------------------
+| Notification Routes — terbuka untuk semua (user login & guest)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/unread-count', [NotificationController::class, 'unreadCount'])->name('unread-count');
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Notification Routes — hanya untuk user yang login
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
+    Route::post('/{id}/read', [NotificationController::class, 'markRead'])->name('read');
+    Route::post('/read-all', [NotificationController::class, 'markAllRead'])->name('read-all');
+});
+
+/*
+|--------------------------------------------------------------------------
 | Authenticated Routes
 |--------------------------------------------------------------------------
 */
@@ -77,6 +98,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('account')->name('user.')->group(function () {
         Route::get('/orders', [UserOrderController::class, 'index'])->name('orders');
         Route::get('/orders/{order}', [UserOrderController::class, 'show'])->name('orders.show');
+        Route::post('/orders/{order}/diterima', [UserOrderController::class, 'pesananDiterima'])->name('orders.diterima');
     });
 
     // Order — hanya transfer manual
@@ -162,6 +184,8 @@ Route::middleware(['auth', 'role:admin_apparel'])
         
         // Validasi bukti transfer (tahap 1)
         Route::post('/orders/{order}/validate-proof', [ApparelOrderController::class, 'validateProof'])->name('orders.validate-proof');
+        Route::post('orders/{order}/packing', [ApparelOrderController::class, 'packing'])->name('orders.packing');
+        Route::post('orders/{order}/kirim',   [ApparelOrderController::class, 'kirim'])->name('orders.kirim');
         
         // Approve / Reject order (tahap 2)
         Route::post('/orders/{order}/approve', [ApparelOrderController::class, 'approve'])->name('orders.approve');

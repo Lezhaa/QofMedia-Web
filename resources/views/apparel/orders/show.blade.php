@@ -82,6 +82,9 @@
     }
     .ob-chip.menunggu  { background: rgba(217,119,6,0.35);  border-color: rgba(251,191,36,0.4);  color: #fff; }
     .ob-chip.disetujui { background: rgba(5,150,105,0.35);  border-color: rgba(52,211,153,0.4);  color: #fff; }
+    .ob-chip.packing   { background: rgba(14,122,150,0.45);  border-color: rgba(78,184,204,0.5);  color: #fff; }
+    .ob-chip.dikirim   { background: rgba(124,58,237,0.35);  border-color: rgba(167,139,250,0.4); color: #fff; }
+    .ob-chip.diterima  { background: rgba(5,150,105,0.5);   border-color: rgba(52,211,153,0.5);  color: #fff; }
     .ob-chip.ditolak   { background: rgba(220,38,38,0.35);  border-color: rgba(248,113,113,0.4); color: #fff; }
     .ob-total { position: relative; z-index: 1; text-align: right; flex-shrink: 0; }
     .ob-total-label  { font-size: 0.72rem; color: rgba(255,255,255,0.55); font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
@@ -168,6 +171,12 @@
     .status-pill.menunggu  .dot { background: #D97706; animation: blink 2s infinite; }
     .status-pill.disetujui { background: #D1FAE5; color: #065F46; }
     .status-pill.disetujui .dot { background: #059669; }
+    .status-pill.packing   { background: #EEF9FC; color: #0E7A96; }
+    .status-pill.packing   .dot { background: #0E7A96; animation: blink 2s infinite; }
+    .status-pill.dikirim   { background: #EDE9FE; color: #5B21B6; }
+    .status-pill.dikirim   .dot { background: #7C3AED; }
+    .status-pill.diterima  { background: #D1FAE5; color: #065F46; }
+    .status-pill.diterima  .dot { background: #059669; }
     .status-pill.ditolak   { background: #FEE2E2; color: #991B1B; }
     .status-pill.ditolak   .dot { background: #DC2626; }
 
@@ -446,6 +455,59 @@
     }
     .btn-reject:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(220,38,38,0.3); color: #fff; }
 
+    .btn-packing {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        width: 100%;
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #0E7A96, #4EB8CC);
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.25s;
+        margin-bottom: 10px;
+        text-decoration: none;
+    }
+    .btn-packing:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(14,122,150,0.3); color: #fff; }
+
+    .btn-kirim {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        width: 100%;
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #7C3AED, #A78BFA);
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.25s;
+        margin-bottom: 10px;
+    }
+    .btn-kirim:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,58,237,0.3); color: #fff; }
+
+    .tracking-box {
+        background: #EDE9FE;
+        border: 1px solid #C4B5FD;
+        border-radius: 12px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+    .tracking-box i { color: #7C3AED; font-size: 1.1rem; flex-shrink: 0; }
+    .tracking-box .tracking-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #7C3AED; margin-bottom: 2px; }
+    .tracking-box .tracking-code { font-size: 1rem; font-weight: 800; color: #5B21B6; font-family: monospace; letter-spacing: 0.05em; }
+
     .btn-wa {
         display: inline-flex;
         align-items: center;
@@ -577,12 +639,18 @@
     $statusClass = match($order->status) {
         'menunggu'  => 'menunggu',
         'disetujui' => 'disetujui',
+        'packing'   => 'packing',
+        'dikirim'   => 'dikirim',
+        'diterima'  => 'diterima',
         'ditolak'   => 'ditolak',
         default     => 'menunggu'
     };
     $statusIcon = match($order->status) {
         'menunggu'  => 'fa-clock',
         'disetujui' => 'fa-check-circle',
+        'packing'   => 'fa-box-open',
+        'dikirim'   => 'fa-truck',
+        'diterima'  => 'fa-home',
         'ditolak'   => 'fa-times-circle',
         default     => 'fa-clock'
     };
@@ -872,14 +940,59 @@
                 </div>
                 @endif
 
-                @if($order->status == 'disetujui')
+                @if(in_array($order->status, ['disetujui', 'packing', 'dikirim', 'diterima']))
                 <div class="tl-item">
                     <div class="tl-spine">
                         <div class="tl-dot" style="background:#D1FAE5; color:#059669;"><i class="fas fa-check"></i></div>
+                        <div class="tl-line"></div>
                     </div>
                     <div class="tl-body">
                         <div class="tl-title" style="color:#059669;">Pesanan Disetujui</div>
-                        <div class="tl-time">{{ $order->updated_at->format('d M Y, H:i') }} WIB</div>
+                        <div class="tl-time">{{ $order->paid_at ? $order->paid_at->format('d M Y, H:i').' WIB' : $order->updated_at->format('d M Y, H:i').' WIB' }}</div>
+                    </div>
+                </div>
+                @endif
+
+                @if(in_array($order->status, ['packing', 'dikirim', 'diterima']))
+                <div class="tl-item">
+                    <div class="tl-spine">
+                        <div class="tl-dot" style="background:#EEF9FC; color:#0E7A96;"><i class="fas fa-box-open"></i></div>
+                        <div class="tl-line"></div>
+                    </div>
+                    <div class="tl-body">
+                        <div class="tl-title" style="color:#0E7A96;">Sedang Dipacking</div>
+                        <div class="tl-time">{{ $order->packing_at ? \Carbon\Carbon::parse($order->packing_at)->format('d M Y, H:i').' WIB' : '-' }}</div>
+                    </div>
+                </div>
+                @endif
+
+                @if(in_array($order->status, ['dikirim', 'diterima']))
+                <div class="tl-item">
+                    <div class="tl-spine">
+                        <div class="tl-dot" style="background:#EDE9FE; color:#7C3AED;"><i class="fas fa-truck"></i></div>
+                        <div class="tl-line"></div>
+                    </div>
+                    <div class="tl-body">
+                        <div class="tl-title" style="color:#7C3AED;">Pesanan Dikirim</div>
+                        <div class="tl-time">{{ $order->shipped_at ? \Carbon\Carbon::parse($order->shipped_at)->format('d M Y, H:i').' WIB' : '-' }}</div>
+                        @if($order->tracking_number)
+                            <div class="tl-time" style="margin-top:5px; background:#EDE9FE; padding:5px 10px; border-radius:8px; display:inline-flex; align-items:center; gap:5px;">
+                                <i class="fas fa-barcode" style="color:#7C3AED;"></i>
+                                <span style="font-family:monospace; font-weight:700; color:#5B21B6;">{{ $order->tracking_number }}</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                @endif
+
+                @if($order->status == 'diterima')
+                <div class="tl-item">
+                    <div class="tl-spine">
+                        <div class="tl-dot" style="background:#D1FAE5; color:#059669;"><i class="fas fa-home"></i></div>
+                    </div>
+                    <div class="tl-body">
+                        <div class="tl-title" style="color:#059669;">Pesanan Diterima</div>
+                        <div class="tl-time">{{ $order->received_at ? \Carbon\Carbon::parse($order->received_at)->format('d M Y, H:i').' WIB' : '-' }}</div>
                     </div>
                 </div>
                 @elseif($order->status == 'ditolak')
@@ -890,6 +1003,9 @@
                     <div class="tl-body">
                         <div class="tl-title" style="color:#DC2626;">Pesanan Ditolak</div>
                         <div class="tl-time">{{ $order->updated_at->format('d M Y, H:i') }} WIB</div>
+                        @if($order->catatan_admin)
+                            <div class="tl-time" style="color:#DC2626;">Alasan: {{ $order->catatan_admin }}</div>
+                        @endif
                     </div>
                 </div>
                 @endif
@@ -903,62 +1019,149 @@
     <div class="col-lg-4">
 
         {{-- Aksi Admin --}}
-        @if($order->status == 'menunggu')
+        @if(in_array($order->status, ['menunggu', 'disetujui', 'packing']))
         <p class="sec-label anim-2">Aksi Admin</p>
         <div class="dash-card anim-2">
             <div class="dash-card-header" style="background:linear-gradient(135deg,#F0FDFF,#EEF9FC);">
                 <div class="dash-card-title">
                     <div class="hdr-icon"><i class="fas fa-gavel"></i></div>
-                    Konfirmasi Pesanan
+                    @if($order->status == 'menunggu') Konfirmasi Pesanan
+                    @elseif($order->status == 'disetujui') Proses Packing
+                    @elseif($order->status == 'packing') Kirim Pesanan
+                    @endif
                 </div>
             </div>
             <div class="dash-card-body">
-                @if(!$order->payment_proof)
-                    <div class="inline-alert warn">
-                        <i class="fas fa-exclamation-triangle" style="flex-shrink:0; margin-top:1px;"></i>
-                        <span>Pemesan belum mengunggah bukti pembayaran.</span>
-                    </div>
 
-                @elseif($proofStatus == 'valid')
+                {{-- STATUS: MENUNGGU --}}
+                @if($order->status == 'menunggu')
+                    @if(!$order->payment_proof)
+                        <div class="inline-alert warn">
+                            <i class="fas fa-exclamation-triangle" style="flex-shrink:0; margin-top:1px;"></i>
+                            <span>Pemesan belum mengunggah bukti pembayaran.</span>
+                        </div>
+                    @elseif($proofStatus == 'valid')
+                        <div class="inline-alert success">
+                            <i class="fas fa-check-circle" style="flex-shrink:0; margin-top:1px;"></i>
+                            <span>Bukti sudah divalidasi sebagai <strong>VALID</strong>. Silakan setujui pesanan.</span>
+                        </div>
+                        <form action="{{ route('apparel.orders.approve', $order) }}" method="POST">
+                            @csrf
+                            <div class="field-group" style="margin-bottom:14px;">
+                                <label class="field-label-sm">Catatan Persetujuan <span style="color:#94A3B8;">(opsional)</span></label>
+                                <textarea name="catatan_admin" class="field-textarea-sm" rows="2"
+                                          placeholder="Transfer sudah dikonfirmasi..."></textarea>
+                            </div>
+                            <button type="submit" class="btn-approve"
+                                    onclick="return confirm('Setujui pesanan ini? Stok akan otomatis dikurangi.')">
+                                <i class="fas fa-check-circle"></i> Setujui Pesanan
+                            </button>
+                        </form>
+                    @elseif($proofStatus == 'invalid')
+                        <div class="inline-alert danger">
+                            <i class="fas fa-times-circle" style="flex-shrink:0; margin-top:1px;"></i>
+                            <span>Bukti divalidasi sebagai <strong>TIDAK VALID</strong>. Silakan tolak pesanan.</span>
+                        </div>
+                        <form action="{{ route('apparel.orders.reject', $order) }}" method="POST">
+                            @csrf
+                            <div class="field-group" style="margin-bottom:14px;">
+                                <label class="field-label-sm">Alasan Penolakan <span style="color:#DC2626;">*</span></label>
+                                <textarea name="catatan_admin" class="field-textarea-sm" rows="2"
+                                          placeholder="Nominal tidak sesuai / transfer tidak ditemukan" required></textarea>
+                            </div>
+                            <button type="submit" class="btn-reject"
+                                    onclick="return confirm('Tolak pesanan ini?')">
+                                <i class="fas fa-times-circle"></i> Tolak Pesanan
+                            </button>
+                        </form>
+                    @else
+                        <div class="inline-alert warn">
+                            <i class="fas fa-clock" style="flex-shrink:0; margin-top:1px;"></i>
+                            <span>Bukti transfer <strong>belum divalidasi</strong>. Validasi bukti terlebih dahulu di bagian kiri.</span>
+                        </div>
+                    @endif
+
+                {{-- STATUS: DISETUJUI → tombol packing --}}
+                @elseif($order->status == 'disetujui')
                     <div class="inline-alert success">
                         <i class="fas fa-check-circle" style="flex-shrink:0; margin-top:1px;"></i>
-                        <span>Bukti sudah divalidasi sebagai <strong>VALID</strong>. Silakan setujui pesanan.</span>
+                        <span>Pesanan sudah disetujui. Konfirmasi bahwa pesanan sedang dipacking.</span>
                     </div>
-                    <form action="{{ route('apparel.orders.approve', $order) }}" method="POST">
+                    <form action="{{ route('apparel.orders.packing', $order) }}" method="POST">
                         @csrf
-                        <div class="field-group" style="margin-bottom:14px;">
-                            <label class="field-label-sm">Catatan Persetujuan <span style="color:#94A3B8;">(opsional)</span></label>
-                            <textarea name="catatan_admin" class="field-textarea-sm" rows="2"
-                                      placeholder="Transfer sudah dikonfirmasi..."></textarea>
-                        </div>
-                        <button type="submit" class="btn-approve"
-                                onclick="return confirm('Setujui pesanan ini? Stok akan otomatis dikurangi.')">
-                            <i class="fas fa-check-circle"></i> Setujui Pesanan
+                        <button type="submit" class="btn-packing"
+                                onclick="return confirm('Konfirmasi pesanan ini sedang dipacking?')">
+                            <i class="fas fa-box-open"></i> Konfirmasi Sedang Dipacking
                         </button>
                     </form>
 
-                @elseif($proofStatus == 'invalid')
-                    <div class="inline-alert danger">
-                        <i class="fas fa-times-circle" style="flex-shrink:0; margin-top:1px;"></i>
-                        <span>Bukti divalidasi sebagai <strong>TIDAK VALID</strong>. Silakan tolak pesanan.</span>
+                {{-- STATUS: PACKING → form kirim dengan kode resi --}}
+                @elseif($order->status == 'packing')
+                    <div class="inline-alert info">
+                        <i class="fas fa-box-open" style="flex-shrink:0; margin-top:1px;"></i>
+                        <span>Pesanan sedang dipacking. Masukkan kode resi dan tandai sudah dikirim.</span>
                     </div>
-                    <form action="{{ route('apparel.orders.reject', $order) }}" method="POST">
+                    <form action="{{ route('apparel.orders.kirim', $order) }}" method="POST">
                         @csrf
-                        <div class="field-group" style="margin-bottom:14px;">
-                            <label class="field-label-sm">Alasan Penolakan <span style="color:#DC2626;">*</span></label>
-                            <textarea name="catatan_admin" class="field-textarea-sm" rows="2"
-                                      placeholder="Nominal tidak sesuai / transfer tidak ditemukan" required></textarea>
+                        <div style="margin-bottom:12px;">
+                            <label class="field-label-sm">Kode Resi / Nomor Tracking <span style="color:#DC2626;">*</span></label>
+                            <input type="text" name="tracking_number" class="field-select"
+                                   placeholder="Contoh: JNE-1234567890, SICEPAT-ABC123"
+                                   style="font-family:monospace; font-weight:700; letter-spacing:0.05em;"
+                                   required>
                         </div>
-                        <button type="submit" class="btn-reject"
-                                onclick="return confirm('Tolak pesanan ini?')">
-                            <i class="fas fa-times-circle"></i> Tolak Pesanan
+                        <div style="margin-bottom:14px;">
+                            <label class="field-label-sm">Catatan Pengiriman <span style="color:#94A3B8;">(opsional)</span></label>
+                            <textarea name="catatan_admin" class="field-textarea-sm" rows="2"
+                                      placeholder="Nama kurir, estimasi tiba, dll..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-kirim"
+                                onclick="return confirm('Tandai pesanan ini sudah dikirim?')">
+                            <i class="fas fa-truck"></i> Tandai Sudah Dikirim
                         </button>
                     </form>
+                @endif
 
-                @else
-                    <div class="inline-alert warn">
-                        <i class="fas fa-clock" style="flex-shrink:0; margin-top:1px;"></i>
-                        <span>Bukti transfer <strong>belum divalidasi</strong>. Validasi bukti terlebih dahulu di bagian kiri.</span>
+            </div>
+        </div>
+        @endif
+
+        {{-- Info Resi jika sudah dikirim --}}
+        @if(in_array($order->status, ['dikirim', 'diterima']) && $order->tracking_number)
+        <p class="sec-label anim-2">Info Pengiriman</p>
+        <div class="dash-card anim-2">
+            <div class="dash-card-header">
+                <div class="dash-card-title">
+                    <div class="hdr-icon"><i class="fas fa-truck"></i></div>
+                    Detail Pengiriman
+                </div>
+            </div>
+            <div class="dash-card-body">
+                <div class="tracking-box">
+                    <i class="fas fa-barcode"></i>
+                    <div>
+                        <div class="tracking-label">Nomor Resi</div>
+                        <div class="tracking-code">{{ $order->tracking_number }}</div>
+                    </div>
+                </div>
+                @if($order->shipped_at)
+                    <div style="font-size:0.8rem; color:#64748B;">
+                        <i class="fas fa-calendar-check" style="color:#7C3AED; margin-right:5px;"></i>
+                        Dikirim pada {{ \Carbon\Carbon::parse($order->shipped_at)->format('d M Y, H:i') }} WIB
+                    </div>
+                @endif
+                @if($order->status == 'diterima' && $order->received_at)
+                    <div style="font-size:0.8rem; color:#059669; margin-top:6px;">
+                        <i class="fas fa-home" style="margin-right:5px;"></i>
+                        Diterima pemesan pada {{ \Carbon\Carbon::parse($order->received_at)->format('d M Y, H:i') }} WIB
+                    </div>
+                @endif
+                @if($order->catatan_admin)
+                    <div style="margin-top:12px;">
+                        <div class="callout-admin">
+                            <div class="callout-label"><i class="fas fa-sticky-note me-1"></i> Catatan Pengiriman</div>
+                            {{ $order->catatan_admin }}
+                        </div>
                     </div>
                 @endif
             </div>

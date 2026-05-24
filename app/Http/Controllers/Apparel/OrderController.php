@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Apparel;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -74,6 +75,26 @@ class OrderController extends Controller
             'catatan_admin' => $request->catatan_admin ?? $order->catatan_admin,
         ]);
 
+        if ($request->payment_proof_validated === 'valid') {
+            Notification::create([
+                'user_id' => $order->user_id,
+                'type'    => 'order_proof_validated',
+                'title'   => 'Bukti Transfer Diverifikasi ✅',
+                'message' => "Bukti transfer pesanan #{$order->id} sudah diverifikasi. Menunggu konfirmasi akhir dari admin.",
+                'url'     => route('user.orders.show', $order->id),
+                'data'    => ['order_id' => $order->id],
+            ]);
+        } elseif ($request->payment_proof_validated === 'invalid') {
+            Notification::create([
+                'user_id' => $order->user_id,
+                'type'    => 'order_rejected',
+                'title'   => 'Bukti Transfer Tidak Valid ❌',
+                'message' => "Bukti transfer pesanan #{$order->id} dinyatakan tidak valid oleh admin. Silakan upload ulang.",
+                'url'     => route('user.orders.show', $order->id),
+                'data'    => ['order_id' => $order->id],
+            ]);
+        }
+
         $statusText = [
             'valid' => 'VALID (disetujui)',
             'invalid' => 'TIDAK VALID (ditolak)',
@@ -122,10 +143,12 @@ class OrderController extends Controller
             if ($order->product_type === 'kaos' && $order->variant_id) {
                 $variant = $order->variant;
                 if (!$variant) {
+                    DB::rollBack();
                     return redirect()->route('apparel.orders.show', $order)
                         ->with('error', 'Varian tidak ditemukan.');
                 }
                 if ($variant->stock < $order->qty) {
+                    DB::rollBack();
                     return redirect()->route('apparel.orders.show', $order)
                         ->with('error', "Stok varian hanya {$variant->stock} pcs, tidak cukup untuk pesanan {$order->qty} pcs.");
                 }
@@ -133,10 +156,12 @@ class OrderController extends Controller
             } else {
                 $product = $order->product;
                 if (!$product) {
+                    DB::rollBack();
                     return redirect()->route('apparel.orders.show', $order)
                         ->with('error', 'Produk tidak ditemukan.');
                 }
                 if ($product->stock < $order->qty) {
+                    DB::rollBack();
                     return redirect()->route('apparel.orders.show', $order)
                         ->with('error', "Stok produk hanya {$product->stock} pcs, tidak cukup untuk pesanan {$order->qty} pcs.");
                 }
@@ -148,6 +173,15 @@ class OrderController extends Controller
                 'payment_status' => 'paid',
                 'paid_at'        => now(),
                 'catatan_admin'  => $validated['catatan_admin'] ?? $order->catatan_admin,
+            ]);
+
+            Notification::create([
+                'user_id' => $order->user_id,
+                'type'    => 'order_approved',
+                'title'   => 'Pesanan Disetujui 🎉',
+                'message' => "Pesanan #{$order->id} Anda telah disetujui dan sedang diproses. Terima kasih!",
+                'url'     => route('user.orders.show', $order->id),
+                'data'    => ['order_id' => $order->id],
             ]);
 
             DB::commit();
@@ -186,10 +220,88 @@ class OrderController extends Controller
             'catatan_admin'  => $validated['catatan_admin'],
         ]);
 
+        Notification::create([
+            'user_id' => $order->user_id,
+            'type'    => 'order_rejected',
+            'title'   => 'Pesanan Ditolak ❌',
+            'message' => "Pesanan #{$order->id} ditolak. Alasan: {$validated['catatan_admin']}",
+            'url'     => route('user.orders.show', $order->id),
+            'data'    => ['order_id' => $order->id],
+        ]);
+
         Log::info("Admin reject Order #{$order->id} — alasan: {$validated['catatan_admin']}");
 
         return redirect()->route('apparel.orders.show', $order)
             ->with('success', 'Pesanan telah ditolak.');
+    }
+
+    /**
+     * STEP 3: Tandai order sebagai Sedang Dipacking
+     * - Status harus "disetujui"
+     */
+    public function packing(Order $order)
+    {
+        if ($order->status !== 'disetujui') {
+            return redirect()->route('apparel.orders.show', $order)
+                ->with('error', 'Hanya order berstatus "Disetujui" yang dapat dipindah ke Sedang Dipacking.');
+        }
+
+        $order->update(['status' => 'packing', 'packing_at' => now()]);
+
+        Notification::create([
+            'user_id' => $order->user_id,
+            'type'    => 'order_packing',
+            'title'   => 'Pesanan Sedang Dipacking 📦',
+            'message' => "Pesanan #{$order->id} Anda sedang dalam proses packing dan akan segera dikirim.",
+            'url'     => route('user.orders.show', $order->id),
+            'data'    => ['order_id' => $order->id],
+        ]);
+
+        Log::info("Admin tandai Order #{$order->id} sebagai Sedang Dipacking.");
+
+        return redirect()->route('apparel.orders.show', $order)
+            ->with('success', 'Pesanan berhasil ditandai Sedang Dipacking.');
+    }
+
+    /**
+     * STEP 4: Tandai order sebagai Sudah Dikirim
+     * - Status harus "packing"
+     * - Bisa menyertakan nomor resi / info pengiriman di catatan_admin
+     */
+    public function kirim(Request $request, Order $order)
+    {
+        $validated = $request->validate([
+            'tracking_number' => 'required|string|max:100',
+            'catatan_admin'   => 'nullable|string|max:500',
+        ]);
+
+        if ($order->status !== 'packing') {
+            return redirect()->route('apparel.orders.show', $order)
+                ->with('error', 'Hanya order berstatus "Sedang Dipacking" yang dapat ditandai sebagai Dikirim.');
+        }
+
+        $order->update([
+            'status'          => 'dikirim',
+            'tracking_number' => $validated['tracking_number'],
+            'shipped_at'      => now(),
+            'catatan_admin'   => $validated['catatan_admin'] ?? $order->catatan_admin,
+        ]);
+
+        $resiInfo = " No. Resi: {$validated['tracking_number']}";
+
+        Notification::create([
+            'user_id' => $order->user_id,
+            'type'    => 'order_shipped',
+            'title'   => 'Pesanan Sudah Dikirim 🚚',
+            'message' => "Pesanan #{$order->id} Anda telah dikirim.{$resiInfo}",
+            'url'     => route('user.orders.show', $order->id),
+            'data'    => ['order_id' => $order->id],
+        ]);
+
+        Log::info("Admin tandai Order #{$order->id} sebagai Sudah Dikirim." . ($validated['catatan_admin'] ? " Resi: {$validated['catatan_admin']}" : ''));
+
+        return redirect()->route('apparel.orders.show', $order)
+            ->with('success', 'Pesanan berhasil ditandai Sudah Dikirim.');
     }
 
     /**
@@ -200,9 +312,9 @@ class OrderController extends Controller
     public function destroy(Order $order)
     {
         // Cek apakah order boleh dihapus
-        if ($order->status === 'disetujui') {
+        if (in_array($order->status, ['disetujui', 'packing', 'dikirim'])) {
             return redirect()->route('apparel.orders.index')
-                ->with('error', 'Order yang sudah disetujui tidak dapat dihapus.');
+                ->with('error', 'Order yang sudah diproses (disetujui/packing/dikirim) tidak dapat dihapus.');
         }
 
         // Simpan informasi untuk log

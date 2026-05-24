@@ -445,18 +445,33 @@
 
     const ctx = document.getElementById('revenueChart').getContext('2d');
     new Chart(ctx, {
-        type: 'bar',
+        type: 'line',
         data: {
             labels: labels,
             datasets: [{
                 label: 'Pendapatan (IDR)',
                 data: dataValues,
-                backgroundColor: 'rgba(14, 122, 150, 0.15)',
+                backgroundColor: function(context) {
+                    const chart = context.chart;
+                    const {ctx, chartArea} = chart;
+                    if (!chartArea) return 'rgba(14, 122, 150, 0.1)';
+                    const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                    gradient.addColorStop(0, 'rgba(14, 122, 150, 0.22)');
+                    gradient.addColorStop(1, 'rgba(14, 122, 150, 0.0)');
+                    return gradient;
+                },
                 borderColor: 'rgba(14, 122, 150, 1)',
-                borderWidth: 2,
-                borderRadius: 8,
-                borderSkipped: false,
-                hoverBackgroundColor: 'rgba(14, 122, 150, 0.28)',
+                borderWidth: 2.5,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: 'rgba(14, 122, 150, 1)',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointHoverBackgroundColor: 'rgba(14, 122, 150, 1)',
+                pointHoverBorderColor: '#fff',
+                pointHoverBorderWidth: 2,
+                tension: 0.4,
+                fill: true,
             }]
         },
         options: {
