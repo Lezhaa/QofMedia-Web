@@ -171,74 +171,78 @@
     }
 
     /* ============================================
-       SERVICE CARD
+       SERVICE CARD — Compact
        ============================================ */
     .service-card {
         background: white;
-        border-radius: 20px;
-        padding: 28px 24px;
+        border-radius: 14px;
+        padding: 14px;
         height: 100%;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.04);
-        transition: all 0.3s;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        transition: all 0.25s;
         border: 1px solid #E2E8F0;
         position: relative;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
     }
 
     .service-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 20px 50px rgba(14,122,150,0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 28px rgba(14,122,150,0.1);
         border-color: #4EB8CC;
     }
 
+    /* Gambar landscape 16:9 agar lebih pendek */
     .service-card .card-image {
         width: 100%;
-        aspect-ratio: 1 / 1;
-        border-radius: 14px;
+        aspect-ratio: 16 / 9;
+        border-radius: 10px;
         object-fit: cover;
-        margin-bottom: 16px;
+        margin-bottom: 10px;
     }
 
     .card-placeholder {
         width: 100%;
-        aspect-ratio: 1 / 1;
-        border-radius: 14px;
+        aspect-ratio: 16 / 9;
+        border-radius: 10px;
         background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 16px;
+        margin-bottom: 10px;
     }
 
     .card-placeholder i {
-        font-size: 48px;
+        font-size: 28px;
         color: #0E7A96;
-        opacity: 0.3;
+        opacity: 0.35;
     }
 
     .service-icon-circle {
-        width: 56px;
-        height: 56px;
+        width: 40px;
+        height: 40px;
         background: linear-gradient(135deg, #0E7A96, #4EB8CC);
-        border-radius: 14px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 16px;
+        margin: 0 auto 10px;
+        flex-shrink: 0;
     }
 
     .service-icon-circle i {
-        font-size: 24px;
+        font-size: 18px;
         color: white;
     }
 
     .badge-stock {
         display: inline-block;
-        padding: 4px 12px;
+        padding: 2px 8px;
         border-radius: 50px;
-        font-size: 0.75rem;
+        font-size: 0.68rem;
         font-weight: 600;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
     }
 
     .badge-stock.available {
@@ -253,37 +257,37 @@
 
     .badge-category {
         display: inline-block;
-        padding: 4px 12px;
+        padding: 2px 8px;
         background: rgba(14,122,150,0.08);
         color: #0E7A96;
         border-radius: 50px;
-        font-size: 0.75rem;
+        font-size: 0.68rem;
         font-weight: 600;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
     }
 
     .badge-popular {
         position: absolute;
-        top: 16px;
-        right: 16px;
+        top: 10px;
+        right: 10px;
         background: linear-gradient(135deg, #F59E0B, #FBBF24);
         color: #0D1B2A;
-        padding: 5px 14px;
+        padding: 3px 10px;
         border-radius: 50px;
-        font-size: 0.72rem;
+        font-size: 0.65rem;
         font-weight: 700;
         z-index: 2;
     }
 
     .price-tag {
-        font-size: 1.3rem;
+        font-size: 1.05rem;
         font-weight: 700;
         color: #0E7A96;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
     }
 
     .price-tag small {
-        font-size: 0.78rem;
+        font-size: 0.72rem;
         font-weight: 400;
         color: #64748B;
     }
@@ -295,47 +299,49 @@
     }
 
     .feature-list li {
-        padding: 8px 0;
+        padding: 5px 0;
         color: #475569;
         display: flex;
         align-items: center;
-        gap: 10px;
-        font-size: 0.88rem;
+        gap: 7px;
+        font-size: 0.8rem;
         border-bottom: 1px solid #F1F5F9;
     }
 
-    .feature-list li:last-child {
-        border-bottom: none;
-    }
+    .feature-list li:last-child { border-bottom: none; }
 
     .feature-list li i {
         color: #10B981;
-        font-size: 1rem;
+        font-size: 0.85rem;
         flex-shrink: 0;
     }
+
+    /* Card body grow so button always at bottom */
+    .card-body-grow { flex: 1; }
 
     .btn-wa {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 6px;
         background: #25D366;
         color: white;
         border: none;
         border-radius: 50px;
-        padding: 12px 24px;
+        padding: 8px 16px;
         font-weight: 600;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         width: 100%;
         text-decoration: none;
-        transition: all 0.3s;
+        transition: all 0.25s;
+        margin-top: auto;
     }
 
     .btn-wa:hover {
         background: #20BA5A;
         color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(37,211,102,0.3);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(37,211,102,0.3);
     }
 
     .btn-disabled {
@@ -346,11 +352,12 @@
         color: #94A3B8;
         border: none;
         border-radius: 50px;
-        padding: 12px 24px;
+        padding: 8px 16px;
         font-weight: 600;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         width: 100%;
         cursor: not-allowed;
+        margin-top: auto;
     }
 
     /* ============================================
@@ -464,26 +471,12 @@
        RESPONSIVE
        ============================================ */
     @media (max-width: 768px) {
-        .studio-hero {
-            padding: 70px 0 40px;
-        }
-
-        .tabs-wrapper .nav-link {
-            padding: 10px 18px !important;
-            font-size: 0.8rem;
-        }
-
-        .cta-studio-card {
-            padding: 36px 24px;
-        }
-
-        .cta-studio-card h2 {
-            font-size: 1.5rem;
-        }
-
-        .service-card {
-            padding: 20px 16px;
-        }
+        .studio-hero { padding: 70px 0 40px; }
+        .tabs-wrapper .nav-link { padding: 10px 18px !important; font-size: 0.8rem; }
+        .cta-studio-card { padding: 36px 24px; }
+        .cta-studio-card h2 { font-size: 1.5rem; }
+        .service-card { padding: 10px; }
+        .price-tag { font-size: 0.92rem; }
     }
 </style>
 <?php $__env->stopPush(); ?>
@@ -539,7 +532,7 @@
 
                 <div class="row g-4">
                     <?php $__empty_1 = true; $__currentLoopData = $tools; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tool): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                        <div class="col-md-6 col-lg-4">
+                        <div class="col-6 col-md-4 col-lg-3">
                             <div class="service-card h-100">
                                 <?php if($tool->image): ?>
                                     <img src="<?php echo e(asset('storage/' . $tool->image)); ?>" class="card-image" alt="<?php echo e($tool->name); ?>" loading="lazy">
@@ -554,19 +547,19 @@
 
                                 </span>
 
-                                <h5 class="fw-bold mb-1"><?php echo e($tool->name); ?></h5>
+                                <p class="fw-bold mb-1" style="font-size:0.85rem;color:#0D1B2A;margin:4px 0 2px;"><?php echo e($tool->name); ?></p>
                                 <span class="badge-category"><?php echo e($tool->category); ?></span>
-                                <p class="text-muted small mb-2"><?php echo e(Str::limit($tool->description, 80)); ?></p>
+                                <p class="text-muted mb-1" style="font-size:0.75rem;line-height:1.4;"><?php echo e(Str::limit($tool->description, 60)); ?></p>
 
                                 <div class="price-tag">
                                     Rp <?php echo e(number_format($tool->price_per_day, 0, ',', '.')); ?> <small>/ hari</small>
                                 </div>
-                                <p class="small text-muted mb-3">Stok: <?php echo e($tool->stock); ?></p>
+                                <p class="text-muted mb-2" style="font-size:0.72rem;">Stok: <?php echo e($tool->stock); ?></p>
 
                                 <?php if($tool->is_available && $tool->stock > 0): ?>
-                                    <a href="https://wa.me/<?php echo e($whatsappNumber ?? '6281246943349'); ?>?text=<?php echo e(urlencode('Halo, saya tertarik menyewa ' . $tool->name)); ?>"
-                                       class="btn-wa" target="_blank">
-                                        <i class="bi bi-whatsapp"></i> Sewa Alat Ini
+                                    <a href="<?php echo e(route('rental.booking.create', $tool)); ?>"
+                                       class="btn-wa">
+                                        <i class="bi bi-calendar-check"></i> Sewa Alat Ini
                                     </a>
                                 <?php else: ?>
                                     <button class="btn-disabled" disabled>Stok Habis</button>
@@ -593,16 +586,16 @@
 
                 <div class="row g-4">
                     <?php $__empty_1 = true; $__currentLoopData = $studioPackages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $package): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                        <div class="col-md-6">
+                        <div class="col-6 col-md-4 col-lg-3">
                             <div class="service-card h-100 text-center">
                                 <div class="service-icon-circle">
                                     <i class="bi bi-camera-reels-fill"></i>
                                 </div>
-                                <h5 class="fw-bold"><?php echo e($package->name); ?></h5>
+                                <p class="fw-bold mb-1" style="font-size:0.85rem;color:#0D1B2A;"><?php echo e($package->name); ?></p>
                                 <span class="badge-category"><?php echo e($package->type ?? 'Studio'); ?></span>
-                                <p class="text-muted small mb-2"><?php echo e($package->description); ?></p>
+                                <p class="text-muted mb-1" style="font-size:0.75rem;line-height:1.4;"><?php echo e($package->description); ?></p>
                                 <div class="price-tag mb-1">Rp <?php echo e(number_format($package->price, 0, ',', '.')); ?></div>
-                                <p class="small text-muted mb-3">Durasi: <?php echo e($package->duration); ?></p>
+                                <p class="text-muted mb-2" style="font-size:0.72rem;">Durasi: <?php echo e($package->duration); ?></p>
 
                                 <?php $facilities = is_string($package->facilities) ? json_decode($package->facilities, true) : $package->facilities; ?>
                                 <?php if(!empty($facilities) && is_array($facilities)): ?>
@@ -639,7 +632,7 @@
 
                 <div class="row g-4">
                     <?php $__empty_1 = true; $__currentLoopData = $photoPackages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $package): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                        <div class="col-md-6 col-lg-4">
+                        <div class="col-6 col-md-4 col-lg-3">
                             <div class="service-card h-100 text-center">
                                 <?php if($package->is_popular ?? false): ?>
                                     <span class="badge-popular">
@@ -650,10 +643,10 @@
                                 <div class="service-icon-circle">
                                     <i class="bi bi-camera-fill"></i>
                                 </div>
-                                <h5 class="fw-bold"><?php echo e($package->name); ?></h5>
+                                <p class="fw-bold mb-1" style="font-size:0.85rem;color:#0D1B2A;"><?php echo e($package->name); ?></p>
                                 <div class="price-tag mb-1">Rp <?php echo e(number_format($package->price, 0, ',', '.')); ?></div>
-                                <p class="small text-muted mb-2"><?php echo e($package->duration); ?></p>
-                                <p class="text-muted small mb-2"><?php echo e($package->description); ?></p>
+                                <p class="text-muted mb-1" style="font-size:0.72rem;"><?php echo e($package->duration); ?></p>
+                                <p class="text-muted mb-2" style="font-size:0.75rem;line-height:1.4;"><?php echo e(Str::limit($package->description, 60)); ?></p>
 
                                 <?php $features = is_string($package->features) ? json_decode($package->features, true) : $package->features; ?>
                                 <?php if(!empty($features) && is_array($features)): ?>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\RentalBooking;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -15,8 +16,13 @@ class OrderController extends Controller
             ->with(['product.category', 'variant'])
             ->latest()
             ->paginate(10);
-        
-        return view('user.orders.index', compact('orders'));
+
+        $rentals = RentalBooking::where('user_id', Auth::id())
+            ->with('tool')
+            ->latest()
+            ->paginate(10, ['*'], 'rental_page');
+
+        return view('user.orders.index', compact('orders', 'rentals'));
     }
     
     public function show(Order $order)
@@ -33,6 +39,18 @@ class OrderController extends Controller
         return view('user.orders.show', compact('order'));
     }
 
+
+    public function showRental(RentalBooking $rentalBooking)
+    {
+        // Pastikan rental milik user yang sedang login
+        if ($rentalBooking->user_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki akses ke data penyewaan ini.');
+        }
+
+        $rentalBooking->load('tool');
+
+        return view('user.orders.rental-show', compact('rentalBooking'));
+    }
 
     /**
      * User konfirmasi pesanan sudah diterima

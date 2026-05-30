@@ -19,6 +19,8 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Studio\ToolController;
 use App\Http\Controllers\Studio\StudioPackageController;
 use App\Http\Controllers\Studio\PhotoPackageController;
+use App\Http\Controllers\Studio\RentalBookingController as StudioRentalBookingController;
+use App\Http\Controllers\RentalBookingController;
 use App\Http\Controllers\Apparel\CategoryController;
 use App\Http\Controllers\Apparel\ProductController;
 use App\Http\Controllers\Apparel\OrderController as ApparelOrderController;
@@ -55,6 +57,8 @@ Route::post('/kontak', [PublicController::class, 'sendContact'])->name('contact.
 Route::prefix('notifications')->name('notifications.')->group(function () {
     Route::get('/unread-count', [NotificationController::class, 'unreadCount'])->name('unread-count');
     Route::get('/', [NotificationController::class, 'index'])->name('index');
+    // markRead dapat diakses tanpa auth karena notif broadcast juga bisa dibaca guest
+    Route::post('/{id}/read', [NotificationController::class, 'markRead'])->name('read');
 });
 
 /*
@@ -63,7 +67,6 @@ Route::prefix('notifications')->name('notifications.')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
-    Route::post('/{id}/read', [NotificationController::class, 'markRead'])->name('read');
     Route::post('/read-all', [NotificationController::class, 'markAllRead'])->name('read-all');
 });
 
@@ -73,6 +76,10 @@ Route::middleware('auth')->prefix('notifications')->name('notifications.')->grou
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
+
+    // Pemesanan sewa alat — wajib login
+    Route::get('/layanan/studio/rental/{tool}', [RentalBookingController::class, 'create'])->name('rental.booking.create');
+    Route::post('/layanan/studio/rental/{tool}', [RentalBookingController::class, 'store'])->name('rental.booking.store');
 
     Route::get('/dashboard', function () {
         $user = auth()->user();
@@ -99,6 +106,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/orders', [UserOrderController::class, 'index'])->name('orders');
         Route::get('/orders/{order}', [UserOrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{order}/diterima', [UserOrderController::class, 'pesananDiterima'])->name('orders.diterima');
+        Route::get('/rentals/{rentalBooking}', [UserOrderController::class, 'showRental'])->name('rentals.show');
     });
 
     // Order — hanya transfer manual
@@ -158,6 +166,13 @@ Route::middleware(['auth', 'role:admin_studio'])
         Route::resource('tools', ToolController::class);
         Route::resource('packages', StudioPackageController::class);
         Route::resource('photo-packages', PhotoPackageController::class);
+
+        // Pemesanan sewa alat
+        Route::get('/rental-bookings', [StudioRentalBookingController::class, 'index'])->name('rental-bookings.index');
+        Route::get('/rental-bookings/{rentalBooking}', [StudioRentalBookingController::class, 'show'])->name('rental-bookings.show');
+        Route::post('/rental-bookings/{rentalBooking}/validate-proof', [StudioRentalBookingController::class, 'validateProof'])->name('rental-bookings.validate-proof');
+        Route::patch('/rental-bookings/{rentalBooking}/status', [StudioRentalBookingController::class, 'updateStatus'])->name('rental-bookings.update-status');
+        Route::delete('/rental-bookings/{rentalBooking}', [StudioRentalBookingController::class, 'destroy'])->name('rental-bookings.destroy');
     });
 
 /*
